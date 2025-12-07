@@ -1,0 +1,128 @@
+import { HostData } from './types';
+
+export const mockHostData: HostData = {
+  hostName: "Sojourn Luxury",
+  year: 2025,
+  totalGuests: 842,
+  totalNights: 80234,
+  totalRevenue: 900000,
+  otaSavings: 158000,
+
+  // New Owner Business Metrics
+  directBookingIncrease: 24,
+  occupancyRate: 88,
+
+  // New Stats
+  websiteVisits: 12405,
+  sheetsCleaned: 3450,
+  toiletriesRestocked: 1240,
+  batteriesReplaced: 85,
+  economicImpact: 1250000,
+
+  // Synthetic Data for different audiences
+  guestSavings: 240, // Average saving per guest
+  totalDistanceTraveled: 1245032, // km
+  cleaningHours: 2150,
+  fiveStarReviewsEarned: 148,
+  maintenanceResolved: 342,
+  localBusinessesSupported: 28,
+  communityCoffeeCount: 3450,
+
+  // Platform Stats
+  platformGlobalRevenue: 450000000,
+  aiConversationsHandled: 2500000,
+  totalPropertiesManaged: 12500,
+
+  homeCoordinates: [-77.0369, 38.9072], // Washington DC
+
+  // Specific Guest User (for map highlight)
+  userOrigin: { city: "San Francisco", coordinates: [-122.4194, 37.7749] },
+
+  topGuestOrigins: [
+    { city: "London", country: "UK", count: 124, coordinates: [-0.1276, 51.5074] },
+    { city: "New York", country: "USA", count: 98, coordinates: [-74.0060, 40.7128] },
+    { city: "Los Angeles", country: "USA", count: 85, coordinates: [-118.2437, 34.0522] },
+    { city: "Paris", country: "France", count: 65, coordinates: [2.3522, 48.8566] },
+    { city: "Tokyo", country: "Japan", count: 42, coordinates: [139.6917, 35.6895] },
+    { city: "Sydney", country: "Australia", count: 12, coordinates: [151.2093, -33.8688] },
+    { city: "Dubai", country: "UAE", count: 22, coordinates: [55.2708, 25.2048] },
+    { city: "Berlin", country: "Germany", count: 34, coordinates: [13.4050, 52.5200] },
+    { city: "Toronto", country: "Canada", count: 56, coordinates: [-79.3832, 43.6532] },
+    { city: "Singapore", country: "Singapore", count: 18, coordinates: [103.8198, 1.3521] },
+    { city: "Mumbai", country: "India", count: 15, coordinates: [72.8777, 19.0760] },
+    { city: "Rio de Janeiro", country: "Brazil", count: 10, coordinates: [-43.1729, -22.9068] },
+    { city: "Cape Town", country: "South Africa", count: 8, coordinates: [18.4232, -33.9249] },
+    { city: "Rome", country: "Italy", count: 28, coordinates: [12.4964, 41.9028] },
+    { city: "Madrid", country: "Spain", count: 24, coordinates: [-3.7038, 40.4168] },
+    { city: "Chicago", country: "USA", count: 45, coordinates: [-87.6298, 41.8781] },
+    { city: "San Francisco", country: "USA", count: 62, coordinates: [-122.4194, 37.7749] },
+    { city: "Miami", country: "USA", count: 38, coordinates: [-80.1918, 25.7617] },
+    { city: "Seattle", country: "USA", count: 29, coordinates: [-122.3321, 47.6062] },
+    { city: "Boston", country: "USA", count: 51, coordinates: [-71.0589, 42.3601] },
+    { city: "Austin", country: "USA", count: 22, coordinates: [-97.7431, 30.2672] },
+    { city: "Denver", country: "USA", count: 19, coordinates: [-104.9903, 39.7392] },
+    { city: "Vancouver", country: "Canada", count: 25, coordinates: [-123.1207, 49.2827] },
+    { city: "Mexico City", country: "Mexico", count: 14, coordinates: [-99.1332, 19.4326] },
+    { city: "Dublin", country: "Ireland", count: 16, coordinates: [-6.2603, 53.3498] },
+    { city: "Amsterdam", country: "Netherlands", count: 31, coordinates: [4.9041, 52.3676] },
+    { city: "Stockholm", country: "Sweden", count: 12, coordinates: [18.0686, 59.3293] },
+    { city: "Seoul", country: "South Korea", count: 20, coordinates: [126.9780, 37.5665] },
+    { city: "Bangkok", country: "Thailand", count: 14, coordinates: [100.5018, 13.7563] },
+    { city: "Istanbul", country: "Turkey", count: 11, coordinates: [28.9784, 41.0082] },
+    { city: "Zurich", country: "Switzerland", count: 18, coordinates: [8.5417, 47.3769] },
+    { city: "Copenhagen", country: "Denmark", count: 9, coordinates: [12.5683, 55.6761] },
+    { city: "Vienna", country: "Austria", count: 11, coordinates: [16.3738, 48.2082] },
+    { city: "Lisbon", country: "Portugal", count: 13, coordinates: [-9.1393, 38.7223] },
+    { city: "Hong Kong", country: "China", count: 24, coordinates: [114.1694, 22.3193] },
+    { city: "Buenos Aires", country: "Argentina", count: 7, coordinates: [-58.3816, -34.6037] },
+    { city: "Montreal", country: "Canada", count: 22, coordinates: [-73.5673, 45.5017] },
+    { city: "Brussels", country: "Belgium", count: 14, coordinates: [4.3517, 50.8503] },
+    { city: "Munich", country: "Germany", count: 19, coordinates: [11.5820, 48.1351] },
+    { city: "Barcelona", country: "Spain", count: 23, coordinates: [2.1734, 41.3851] },
+    { city: "Prague", country: "Czechia", count: 15, coordinates: [14.4378, 50.0755] },
+    { city: "Budapest", country: "Hungary", count: 12, coordinates: [19.0402, 47.4979] },
+    { city: "Warsaw", country: "Poland", count: 10, coordinates: [21.0122, 52.2297] },
+    { city: "Oslo", country: "Norway", count: 8, coordinates: [10.7522, 59.9139] },
+    { city: "Helsinki", country: "Finland", count: 7, coordinates: [24.9384, 60.1699] },
+    { city: "Athens", country: "Greece", count: 16, coordinates: [23.7275, 37.9838] },
+    { city: "Tel Aviv", country: "Israel", count: 20, coordinates: [34.7818, 32.0853] },
+    { city: "Cairo", country: "Egypt", count: 9, coordinates: [31.2357, 30.0444] },
+    { city: "Shanghai", country: "China", count: 15, coordinates: [121.4737, 31.2304] },
+    { city: "Beijing", country: "China", count: 12, coordinates: [116.4074, 39.9042] },
+    { city: "Manila", country: "Philippines", count: 8, coordinates: [120.9842, 14.5995] },
+    { city: "Jakarta", country: "Indonesia", count: 6, coordinates: [106.8456, -6.2088] },
+    { city: "Kuala Lumpur", country: "Malaysia", count: 7, coordinates: [101.6869, 3.1390] },
+    { city: "Melbourne", country: "Australia", count: 9, coordinates: [144.9631, -37.8136] },
+    { city: "Auckland", country: "New Zealand", count: 5, coordinates: [174.7633, -36.8485] },
+    { city: "Santiago", country: "Chile", count: 6, coordinates: [-70.6693, -33.4489] },
+    { city: "Bogota", country: "Colombia", count: 8, coordinates: [-74.0721, 4.7110] },
+    { city: "Lima", country: "Peru", count: 5, coordinates: [-77.0428, -12.0464] }
+  ],
+  topSearchTerm: "capitol hill apartments",
+  busiestDate: "May 22",
+  biggestBooking: {
+    amount: 36709,
+    nights: 170,
+    property: "Luxury Apartment steps to The Dupont Circle Metro"
+  },
+  monthlyOccupancy: [
+    { month: 'J', occupancy: 65, revenue: 45000 },
+    { month: 'F', occupancy: 70, revenue: 52000 },
+    { month: 'M', occupancy: 85, revenue: 78000 },
+    { month: 'A', occupancy: 92, revenue: 89000 },
+    { month: 'M', occupancy: 98, revenue: 95000 },
+    { month: 'J', occupancy: 95, revenue: 92000 },
+    { month: 'J', occupancy: 88, revenue: 85000 },
+    { month: 'A', occupancy: 80, revenue: 75000 },
+    { month: 'S', occupancy: 90, revenue: 88000 },
+    { month: 'O', occupancy: 94, revenue: 91000 },
+    { month: 'N', occupancy: 82, revenue: 70000 },
+    { month: 'D', occupancy: 75, revenue: 60000 },
+  ],
+  spotlightReview: {
+    guest: "Sarah Jenkins",
+    text: "The absolute best stay we've had in DC. The attention to detail was unmatched and the location was perfect.",
+    rating: 5,
+    property: "Sojourn Classic DC Rowhouse"
+  }
+};
