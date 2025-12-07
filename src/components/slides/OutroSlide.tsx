@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { Audience } from '@/lib/types';
+import { typography } from '@/lib/design-system';
 
 interface OutroSlideProps {
   summary: string;
@@ -22,7 +23,7 @@ export const OutroSlide: React.FC<OutroSlideProps> = ({ summary, isLoading, audi
            </div>
         </div>
 
-        <h2 className="text-5xl font-serif font-bold mb-12 drop-shadow-md">2025 Wrapped</h2>
+        <h2 className={`${typography.hero} mb-12 drop-shadow-md`}>2025 Wrapped</h2>
 
         <div className="bg-black/20 backdrop-blur-md rounded-[2.5rem] p-8 border border-white/10 relative min-h-[200px] flex items-center justify-center shadow-2xl">
             {isLoading || !summary ? (
@@ -33,24 +34,23 @@ export const OutroSlide: React.FC<OutroSlideProps> = ({ summary, isLoading, audi
                 </div>
             ) : (
                 <div
-                  className="text-xl md:text-2xl font-light leading-relaxed text-white/90
+                  className={`${typography.body} text-white/90
                   [&>strong]:text-white
                   [&>strong]:font-serif
                   [&>strong]:italic
                   [&>strong]:font-bold
-                  [&>strong]:text-[1.2em]
-                  [&>strong]:mx-1"
+                  [&>strong]:mx-1`}
                   dangerouslySetInnerHTML={{ __html: summary }}
                 />
             )}
         </div>
 
         <div className="mt-12 space-y-4">
-            <button className="w-full bg-white text-black font-bold py-4 rounded-2xl text-md hover:bg-gray-200 transition-colors shadow-[0_0_20px_rgba(255,255,255,0.2)] tracking-wide uppercase">
+            <button className={`w-full bg-white text-black ${typography.button} py-4 rounded-2xl hover:bg-gray-200 transition-colors shadow-[0_0_20px_rgba(255,255,255,0.2)]`}>
                 Share This Story
             </button>
             {audience === 'OWNER' && (
-              <button className="w-full bg-transparent border border-white/20 text-white font-bold py-4 rounded-2xl text-md hover:bg-white/5 transition-colors tracking-wide uppercase">
+              <button className={`w-full bg-transparent border border-white/20 text-white ${typography.button} py-4 rounded-2xl hover:bg-white/5 transition-colors`}>
                   Full Analytics Report
               </button>
             )}

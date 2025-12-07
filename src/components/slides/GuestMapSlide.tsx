@@ -5,6 +5,7 @@ import dynamic from 'next/dynamic';
 import * as d3 from 'd3';
 import { HostData, Audience } from '@/lib/types';
 import * as topojson from 'topojson-client';
+import { typography } from '@/lib/design-system';
 
 // Dynamic import for Leaflet map (client-side only)
 const LocalMap = dynamic(() => import('@/components/LocalMap').then(mod => mod.LocalMap), {
@@ -488,12 +489,12 @@ export const GuestMapSlide: React.FC<GuestMapSlideProps> = ({
       {/* Header */}
       {!hideHeader && (
         <div className="flex flex-col items-center mb-4 z-20 animate-fade-in relative pointer-events-none">
-          <div className="bg-white/10 px-4 py-1.5 rounded-full border border-white/20 mb-6 backdrop-blur-md shadow-lg">
-            <span className="text-[10px] font-bold font-sans tracking-[0.2em] uppercase text-white">
+          <div className={`bg-white/10 px-4 py-1.5 rounded-full border border-white/20 mb-6 backdrop-blur-md shadow-lg ${typography.label}`}>
+            <span className="text-white">
               {audience === 'HOSTAI' ? 'Global Network' : (viewMode === 'LOCAL' ? 'Neighborhood' : 'Global Reach')}
             </span>
           </div>
-          <h2 className="text-4xl md:text-5xl font-serif font-bold text-center leading-tight drop-shadow-md whitespace-pre-line">
+          <h2 className={`${typography.hero} text-center drop-shadow-md whitespace-pre-line`}>
             {viewMode === 'LOCAL' ? 'Local Impact \n & Vibe.' : (audience === 'HOSTAI' ? 'Connecting \n the world.' : 'The world came \n to stay.')}
           </h2>
         </div>
@@ -502,7 +503,7 @@ export const GuestMapSlide: React.FC<GuestMapSlideProps> = ({
       {/* Map Container */}
       <div ref={containerRef} className="flex-1 w-full relative flex items-center justify-center z-10">
         {loading && viewMode !== 'LOCAL' && (
-          <div className="absolute text-white/50 animate-pulse font-mono text-xs tracking-widest uppercase">
+          <div className={`absolute ${typography.mono} text-white/50 animate-pulse uppercase tracking-widest`}>
             Calibrating Geodata...
           </div>
         )}
@@ -510,19 +511,19 @@ export const GuestMapSlide: React.FC<GuestMapSlideProps> = ({
 
         {/* Local Legend Overlay */}
         {viewMode === 'LOCAL' && !loading && !hideHeader && (
-          <div className="absolute bottom-4 right-4 bg-black/50 backdrop-blur-lg p-4 rounded-2xl border border-white/10 text-[10px] font-sans animate-fade-in shadow-xl">
-            <div className="text-[8px] uppercase tracking-widest text-white/40 mb-3 font-medium">Neighborhood</div>
+          <div className="absolute bottom-4 right-4 bg-black/50 backdrop-blur-lg p-4 rounded-2xl border border-white/10 animate-fade-in shadow-xl">
+            <div className={`${typography.sublabel} text-white/40 mb-3`}>Neighborhood</div>
             <div className="flex items-center gap-3 mb-2">
               <div className="w-3 h-3 rounded-full bg-[#ef4444] shadow-lg shadow-red-500/30"></div>
-              <span className="text-white/80 font-medium">Your Stay</span>
+              <span className={`${typography.mono} text-white/80`}>Your Stay</span>
             </div>
             <div className="flex items-center gap-3 mb-2">
               <div className="w-3 h-3 rounded-full bg-[#fbbf24] shadow-lg shadow-amber-500/30"></div>
-              <span className="text-white/80 font-medium">Coffee Shops</span>
+              <span className={`${typography.mono} text-white/80`}>Coffee Shops</span>
             </div>
             <div className="flex items-center gap-3">
               <div className="w-3 h-3 rounded-full bg-[#22d3ee] shadow-lg shadow-cyan-500/30"></div>
-              <span className="text-white/80 font-medium">Local Spots</span>
+              <span className={`${typography.mono} text-white/80`}>Local Spots</span>
             </div>
           </div>
         )}

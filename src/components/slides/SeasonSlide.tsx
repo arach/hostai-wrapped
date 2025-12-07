@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { HostData } from '@/lib/types';
+import { typography } from '@/lib/design-system';
 import { BarChart, Bar, XAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 
 interface SeasonSlideProps {
@@ -41,15 +42,15 @@ export const SeasonSlide: React.FC<SeasonSlideProps> = ({ data }) => {
     <div className="flex flex-col h-full pt-20 px-6 pb-20">
 
       <div className="text-center mb-8 animate-fade-in">
-        <div className="bg-white/10 inline-block px-4 py-1 rounded-full border border-white/20 mb-6">
-            <span className="text-xs font-bold tracking-widest uppercase">Hottest Check-in Date</span>
+        <div className={`bg-white/10 inline-block px-4 py-1.5 rounded-full border border-white/20 mb-6 ${typography.label}`}>
+            Hottest Check-in Date
         </div>
-        <h2 className="text-6xl font-bold mb-4">{data.busiestDate}</h2>
-        <p className="text-xl text-white/80">Your busiest check-in day of the year.</p>
+        <h2 className={`${typography.hero} mb-4`}>{data.busiestDate}</h2>
+        <p className={`${typography.body} text-white/80`}>Your busiest check-in day of the year.</p>
       </div>
 
       <div className="flex-1 w-full min-h-[200px] flex flex-col justify-end pb-8 animate-slide-up">
-        <h3 className="text-sm font-mono uppercase text-white/60 mb-4 pl-2">Occupancy Rhythm</h3>
+        <h3 className={`${typography.sublabel} mb-4 pl-2`}>Occupancy Rhythm</h3>
         <div ref={containerRef} className="h-64 w-full bg-black/20 rounded-xl p-4 backdrop-blur-sm border border-white/10">
             {isReady && (
               <ResponsiveContainer width="100%" height={200} minWidth={200}>
@@ -79,7 +80,7 @@ export const SeasonSlide: React.FC<SeasonSlideProps> = ({ data }) => {
         </div>
       </div>
 
-      <div className="mt-4 animate-fade-in text-white/90 font-medium flex items-center justify-center gap-2">
+      <div className={`mt-4 animate-fade-in ${typography.bodySmall} text-white/90 flex items-center justify-center gap-2`}>
         <span>Full house</span>
       </div>
     </div>

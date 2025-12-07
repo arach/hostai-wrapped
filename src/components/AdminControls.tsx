@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Audience, SlideType } from '@/lib/types';
+import { typography } from '@/lib/design-system';
 
 // Short hash generation for host IDs
 // Takes a UUID and creates a short, URL-safe hash (6 chars)
@@ -113,13 +114,13 @@ export const AdminControls: React.FC<AdminControlsProps> = ({
       {/* Top Row: Audience Selector & Playback */}
       <div className="flex items-center justify-between border-b border-zinc-800 pb-4">
         <div className="flex items-center gap-3">
-            <span className="text-[10px] uppercase tracking-widest text-zinc-500 font-mono">View As</span>
+            <span className={`${typography.mono} text-zinc-500 uppercase tracking-widest`}>View As</span>
             <div className="flex bg-zinc-800 rounded-lg p-1">
                 {(['OWNER', 'GUEST', 'STAFF', 'HOSTAI'] as Audience[]).map((aud) => (
                     <button
                         key={aud}
                         onClick={() => setAudience(aud)}
-                        className={`px-3 py-1.5 rounded-md text-[10px] font-bold transition-all ${
+                        className={`px-3 py-1.5 rounded-md ${typography.button} transition-all ${
                             audience === aud
                             ? 'bg-zinc-700 text-white shadow-sm'
                             : 'text-zinc-500 hover:text-zinc-300'
@@ -151,17 +152,17 @@ export const AdminControls: React.FC<AdminControlsProps> = ({
 
       {/* Share URL Section */}
       <div className="flex flex-col gap-3 border-b border-zinc-800 pb-4">
-        <span className="text-[10px] uppercase tracking-widest text-zinc-500 font-mono">Share Links</span>
+        <span className={`${typography.mono} text-zinc-500 uppercase tracking-widest`}>Share Links</span>
 
         {/* Dev URL - Full UUID */}
         <div className="flex items-center gap-2">
-          <span className="text-[9px] uppercase tracking-wider text-zinc-600 font-mono w-10 shrink-0">Dev</span>
+          <span className={`${typography.mono} text-zinc-600 uppercase w-10 shrink-0`}>Dev</span>
           <div className="flex-1 bg-zinc-800 rounded-lg px-3 py-2 overflow-hidden">
-            <span className="text-[10px] text-zinc-400 font-mono truncate block">{devUrl}</span>
+            <span className={`${typography.mono} text-zinc-400 truncate block`}>{devUrl}</span>
           </div>
           <button
               onClick={handleCopyDev}
-              className={`px-3 py-2 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-all shrink-0 ${
+              className={`px-3 py-2 rounded-lg ${typography.button} transition-all shrink-0 ${
                   copied
                   ? 'bg-green-500/20 text-green-400 border border-green-500/30'
                   : 'bg-zinc-700 text-zinc-300 border border-zinc-600 hover:bg-zinc-600'
@@ -173,13 +174,13 @@ export const AdminControls: React.FC<AdminControlsProps> = ({
 
         {/* Short URL - Hash */}
         <div className="flex items-center gap-2">
-          <span className="text-[9px] uppercase tracking-wider text-purple-400 font-mono w-10 shrink-0">Short</span>
+          <span className={`${typography.mono} text-purple-400 uppercase w-10 shrink-0`}>Short</span>
           <div className="flex-1 bg-zinc-800 rounded-lg px-3 py-2 overflow-hidden border border-purple-500/20">
-            <span className="text-[10px] text-purple-300 font-mono truncate block">{shortUrl}</span>
+            <span className={`${typography.mono} text-purple-300 truncate block`}>{shortUrl}</span>
           </div>
           <button
               onClick={handleCopyShort}
-              className={`px-3 py-2 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-all shrink-0 ${
+              className={`px-3 py-2 rounded-lg ${typography.button} transition-all shrink-0 ${
                   shortCopied
                   ? 'bg-green-500/20 text-green-400 border border-green-500/30'
                   : 'bg-purple-500/20 text-purple-400 border border-purple-500/30 hover:bg-purple-500/30'
@@ -193,7 +194,7 @@ export const AdminControls: React.FC<AdminControlsProps> = ({
       {/* Middle Row: Slide Navigation */}
       <div className="flex flex-col gap-2">
          <div className="flex justify-between items-end">
-            <span className="text-[10px] uppercase tracking-widest text-zinc-500 font-mono">
+            <span className={`${typography.mono} text-zinc-500 uppercase tracking-widest`}>
                 Slide {currentSlideIndex + 1}/{slides.length}: <span className="text-zinc-300">{currentSlideType}</span>
             </span>
          </div>
@@ -217,25 +218,25 @@ export const AdminControls: React.FC<AdminControlsProps> = ({
       {/* Bottom Row: Context Specific Controls */}
       {currentSlideType === SlideType.MAP && (
         <div className="animate-slide-up pt-4 border-t border-zinc-800 flex items-center gap-4">
-             <span className="text-[10px] uppercase tracking-widest text-blue-400 font-mono">Map Controls</span>
+             <span className={`${typography.mono} text-blue-400 uppercase tracking-widest`}>Map Controls</span>
 
              <div className="flex items-center gap-2">
                 <div className="flex bg-zinc-800 rounded-lg p-1">
                     <button
                         onClick={() => setMapViewMode('GLOBE')}
-                        className={`px-3 py-1 rounded-md text-[10px] font-bold transition-all ${mapViewMode === 'GLOBE' ? 'bg-zinc-600 text-white' : 'text-zinc-400'}`}
+                        className={`px-3 py-1 rounded-md ${typography.button} transition-all ${mapViewMode === 'GLOBE' ? 'bg-zinc-600 text-white' : 'text-zinc-400'}`}
                     >
                         Globe
                     </button>
                     <button
                         onClick={() => setMapViewMode('MAP')}
-                        className={`px-3 py-1 rounded-md text-[10px] font-bold transition-all ${mapViewMode === 'MAP' ? 'bg-zinc-600 text-white' : 'text-zinc-400'}`}
+                        className={`px-3 py-1 rounded-md ${typography.button} transition-all ${mapViewMode === 'MAP' ? 'bg-zinc-600 text-white' : 'text-zinc-400'}`}
                     >
                         Map
                     </button>
                     <button
                         onClick={() => setMapViewMode('LOCAL')}
-                        className={`px-3 py-1 rounded-md text-[10px] font-bold transition-all ${mapViewMode === 'LOCAL' ? 'bg-zinc-600 text-white' : 'text-zinc-400'}`}
+                        className={`px-3 py-1 rounded-md ${typography.button} transition-all ${mapViewMode === 'LOCAL' ? 'bg-zinc-600 text-white' : 'text-zinc-400'}`}
                     >
                         Local
                     </button>
@@ -244,7 +245,7 @@ export const AdminControls: React.FC<AdminControlsProps> = ({
                 {mapViewMode === 'GLOBE' && (
                     <button
                         onClick={() => setIsMapPlaying(!isMapPlaying)}
-                        className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border text-[10px] font-bold uppercase tracking-wider ${
+                        className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border ${typography.button} ${
                             isMapPlaying
                             ? 'border-blue-500/30 text-blue-400 bg-blue-500/10'
                             : 'border-zinc-700 text-zinc-400 hover:bg-zinc-800'

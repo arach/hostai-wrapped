@@ -74,14 +74,19 @@ export const StoryLayout: React.FC<StoryLayoutProps> = ({
         </div>
 
         {/* Footer Brand - Glassy & Elevated */}
-        <div className="absolute bottom-10 w-full z-20 flex justify-center pointer-events-none">
-            <div className="flex items-center gap-3 px-5 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-md shadow-lg">
+        <div className="absolute bottom-10 w-full z-30 flex justify-center">
+            <a
+              href="https://gethostai.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-3 px-5 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-md shadow-lg hover:bg-white/10 transition-colors cursor-pointer"
+            >
                 <span className="text-[9px] font-sans uppercase tracking-[0.15em] text-white/50 font-medium translate-y-[0.5px]">
                    Powered by
                 </span>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src="https://gethostai.com/images/hostai-logo-light.svg" alt="HostAI" className="h-3 w-auto opacity-90" />
-            </div>
+            </a>
         </div>
       </div>
   );

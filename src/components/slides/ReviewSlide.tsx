@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { HostData } from '@/lib/types';
+import { typography } from '@/lib/design-system';
 
 interface ReviewSlideProps {
   data: HostData;
@@ -13,8 +14,8 @@ export const ReviewSlide: React.FC<ReviewSlideProps> = ({ data }) => {
       <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-white/10 to-transparent pointer-events-none" />
 
       <div className="bg-white/10 backdrop-blur-lg border border-white/20 p-8 rounded-3xl relative animate-slide-up">
-        <div className="absolute -top-6 left-1/2 -translate-x-1/2 bg-pink-500 px-4 py-2 rounded-full shadow-lg">
-            <span className="font-bold text-sm tracking-widest uppercase">Star Property</span>
+        <div className={`absolute -top-6 left-1/2 -translate-x-1/2 bg-pink-500 px-4 py-2 rounded-full shadow-lg ${typography.label}`}>
+            Star Property
         </div>
 
         <div className="flex gap-1 mb-6 justify-center">
@@ -25,19 +26,19 @@ export const ReviewSlide: React.FC<ReviewSlideProps> = ({ data }) => {
             ))}
         </div>
 
-        <h3 className="text-3xl font-serif font-bold text-center leading-tight mb-6">
+        <h3 className={`${typography.title} text-center leading-tight mb-6`}>
           &quot;{data.spotlightReview.text}&quot;
         </h3>
 
         <div className="text-center border-t border-white/10 pt-4">
-            <p className="font-bold text-lg">{data.spotlightReview.guest}</p>
-            <p className="text-white/60 text-sm">stayed at {data.spotlightReview.property}</p>
+            <p className={`${typography.body} font-bold`}>{data.spotlightReview.guest}</p>
+            <p className={`${typography.bodySmall} text-white/60`}>stayed at {data.spotlightReview.property}</p>
         </div>
       </div>
 
       <div className="mt-12 text-center animate-fade-in">
-        <h2 className="text-2xl font-bold mb-2">The people&apos;s choice</h2>
-        <p className="text-white/70">Viewed by 459 guests this year</p>
+        <h2 className={`${typography.stat} mb-2`}>The people&apos;s choice</h2>
+        <p className={`${typography.bodySmall} text-white/70`}>Viewed by 459 guests this year</p>
       </div>
     </div>
   );
