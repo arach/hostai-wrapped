@@ -61,21 +61,28 @@ export const GuestMapSlide: React.FC<GuestMapSlideProps> = ({
   // Animation State Refs
   const rotationRef = useRef<[number, number, number]>([-data.homeCoordinates[0], -20, 0]);
 
-  // Synthetic Local Data (Memoized so points don't jump around)
+  // DC-specific local points of interest (real locations around Dupont Circle/Capitol Hill)
   const localPoints = useMemo(() => {
-    return Array.from({ length: 30 }).map(() => {
-      // Generate random points near homeCoordinates
-      const r = Math.random() * 0.015; // Radius approx 1-2km
-      const theta = Math.random() * 2 * Math.PI;
-      return {
-        coordinates: [
-          data.homeCoordinates[0] + r * Math.cos(theta),
-          data.homeCoordinates[1] + r * Math.sin(theta)
-        ],
-        type: Math.random() > 0.5 ? 'coffee' : 'business'
-      };
-    });
-  }, [data.homeCoordinates]);
+    // These are actual DC coffee shops and local businesses near the property area
+    return [
+      // Coffee Shops
+      { coordinates: [-77.0428, 38.9096], type: 'coffee', name: 'Compass Coffee' },
+      { coordinates: [-77.0312, 38.9048], type: 'coffee', name: 'Peregrine Espresso' },
+      { coordinates: [-77.0455, 38.9134], type: 'coffee', name: 'Filter Coffeehouse' },
+      { coordinates: [-77.0267, 38.9002], type: 'coffee', name: 'Swings Coffee' },
+      { coordinates: [-77.0398, 38.9167], type: 'coffee', name: 'The Coffee Bar' },
+      { coordinates: [-77.0489, 38.9045], type: 'coffee', name: 'Emissary' },
+      // Local Businesses / Restaurants
+      { coordinates: [-77.0341, 38.9078], type: 'business', name: 'Eastern Market' },
+      { coordinates: [-77.0423, 38.9112], type: 'business', name: 'Le Diplomate' },
+      { coordinates: [-77.0356, 38.9021], type: 'business', name: 'Rose\'s Luxury' },
+      { coordinates: [-77.0478, 38.9089], type: 'business', name: 'Founding Farmers' },
+      { coordinates: [-77.0289, 38.9056], type: 'business', name: 'Ted\'s Bulletin' },
+      { coordinates: [-77.0512, 38.9023], type: 'business', name: 'Commissary DC' },
+      { coordinates: [-77.0334, 38.9134], type: 'business', name: 'Union Market' },
+      { coordinates: [-77.0456, 38.8987], type: 'business', name: 'The Smith' },
+    ];
+  }, []);
 
   // 1. Fetch Topology Data Once (Only needed for Globe/Map)
   useEffect(() => {
@@ -133,7 +140,7 @@ export const GuestMapSlide: React.FC<GuestMapSlideProps> = ({
     } else { // LOCAL
       projection = d3.geoMercator()
         .center(data.homeCoordinates as [number, number])
-        .scale(3000000) // Extreme Zoom for street/zipcode level
+        .scale(850000) // Neighborhood level zoom (~2-3 mile radius visible)
         .translate([width / 2, height / 2]);
     }
 
@@ -202,18 +209,22 @@ export const GuestMapSlide: React.FC<GuestMapSlideProps> = ({
         .attr("stroke", MAP_CONSTANTS.colors.landBorder)
         .attr("stroke-width", 0.5);
     } else if (viewMode === 'LOCAL') {
-      // In local mode, define grid pattern
+      // In local mode, add glow effects for markers
       const defs = svg.append("defs");
-      const pattern = defs.append("pattern")
-        .attr("id", "grid")
-        .attr("width", 40)
-        .attr("height", 40)
-        .attr("patternUnits", "userSpaceOnUse");
-      pattern.append("path")
-        .attr("d", "M 40 0 L 0 0 0 40")
-        .attr("fill", "none")
-        .attr("stroke", "rgba(255,255,255,0.1)")
-        .attr("stroke-width", 0.5);
+
+      // Glow filter for property marker
+      const glowFilter = defs.append("filter")
+        .attr("id", "glow")
+        .attr("x", "-50%")
+        .attr("y", "-50%")
+        .attr("width", "200%")
+        .attr("height", "200%");
+      glowFilter.append("feGaussianBlur")
+        .attr("stdDeviation", "3")
+        .attr("result", "coloredBlur");
+      const feMerge = glowFilter.append("feMerge");
+      feMerge.append("feMergeNode").attr("in", "coloredBlur");
+      feMerge.append("feMergeNode").attr("in", "SourceGraphic");
     }
 
     // Arcs Group (Hidden in LOCAL)
@@ -235,77 +246,95 @@ export const GuestMapSlide: React.FC<GuestMapSlideProps> = ({
     if (viewMode === 'LOCAL') {
       const center = projection(data.homeCoordinates as [number, number]);
       if (center) {
-        // Boundary Circle
+        // Outer radius ring (neighborhood boundary)
         markersGroup.append("circle")
           .attr("cx", center[0])
           .attr("cy", center[1])
-          .attr("r", 150)
+          .attr("r", 120)
           .attr("fill", "none")
-          .attr("stroke", "rgba(255,255,255,0.3)")
-          .attr("stroke-dasharray", "4 4")
-          .attr("stroke-width", 1.5);
+          .attr("stroke", "rgba(255,255,255,0.15)")
+          .attr("stroke-dasharray", "8 4")
+          .attr("stroke-width", 1);
 
-        // Zipcode Label
+        // Inner radius ring
+        markersGroup.append("circle")
+          .attr("cx", center[0])
+          .attr("cy", center[1])
+          .attr("r", 60)
+          .attr("fill", "none")
+          .attr("stroke", "rgba(255,255,255,0.1)")
+          .attr("stroke-dasharray", "4 4")
+          .attr("stroke-width", 1);
+
+        // Property marker with glow (larger, more prominent)
+        markersGroup.append("circle")
+          .attr("cx", center[0])
+          .attr("cy", center[1])
+          .attr("r", 12)
+          .attr("fill", MAP_CONSTANTS.colors.hostMarker)
+          .attr("stroke", "white")
+          .attr("stroke-width", 3)
+          .style("filter", "url(#glow)");
+
+        // Property label
         markersGroup.append("text")
           .attr("x", center[0])
-          .attr("y", center[1] - 160)
+          .attr("y", center[1] - 24)
           .attr("text-anchor", "middle")
-          .attr("fill", "rgba(255,255,255,0.8)")
-          .attr("font-family", "monospace")
-          .attr("font-size", "12px")
-          .attr("font-weight", "bold")
-          .attr("letter-spacing", "2px")
-          .text("NEIGHBORHOOD ZONE");
+          .attr("fill", "white")
+          .attr("font-family", "system-ui, sans-serif")
+          .attr("font-size", "11px")
+          .attr("font-weight", "600")
+          .attr("letter-spacing", "0.5px")
+          .text("YOUR STAY");
 
-        // Local Points (Coffee, Shops)
+        // Local Points (Coffee, Shops) - animate in with stagger
         localPoints.forEach((pt, i) => {
           const ptCoords = projection(pt.coordinates as [number, number]);
           if (ptCoords) {
-            markersGroup.append("circle")
-              .attr("cx", ptCoords[0])
-              .attr("cy", ptCoords[1])
-              .attr("r", 0)
-              .attr("fill", pt.type === 'coffee' ? '#fbbf24' : '#22d3ee')
-              .attr("stroke", "rgba(0,0,0,0.5)")
-              .attr("stroke-width", 1)
-              .attr("opacity", 0.9)
-              .transition()
-              .delay(i * 50)
-              .duration(800)
-              .ease(d3.easeBackOut)
-              .attr("r", 4);
+            // Only show points within visible radius
+            const dist = Math.sqrt(Math.pow(ptCoords[0] - center[0], 2) + Math.pow(ptCoords[1] - center[1], 2));
+            if (dist < 200) {
+              markersGroup.append("circle")
+                .attr("cx", ptCoords[0])
+                .attr("cy", ptCoords[1])
+                .attr("r", 0)
+                .attr("fill", pt.type === 'coffee' ? '#fbbf24' : '#22d3ee')
+                .attr("stroke", "rgba(255,255,255,0.3)")
+                .attr("stroke-width", 1.5)
+                .attr("opacity", 0)
+                .transition()
+                .delay(500 + i * 80)
+                .duration(600)
+                .ease(d3.easeBackOut)
+                .attr("r", 6)
+                .attr("opacity", 0.9);
+            }
           }
         });
 
-        // Radar Sweep
-        const radar = markersGroup.append("circle")
+        // Subtle pulse animation on property marker
+        const pulse = markersGroup.append("circle")
           .attr("cx", center[0])
           .attr("cy", center[1])
-          .attr("r", 0)
+          .attr("r", 12)
           .attr("fill", "none")
-          .attr("stroke", "rgba(34, 211, 238, 0.4)")
-          .attr("stroke-width", 2);
+          .attr("stroke", MAP_CONSTANTS.colors.hostMarker)
+          .attr("stroke-width", 2)
+          .attr("opacity", 0.8);
 
-        radar.transition()
-          .duration(3000)
-          .ease(d3.easeLinear)
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          .attrTween("r", () => d3.interpolate(0, 200) as any)
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          .attrTween("opacity", () => d3.interpolate(1, 0) as any)
-          .on("end", function repeat() {
-            d3.select(this)
-              .attr("r", 0)
-              .attr("opacity", 1)
-              .transition()
-              .duration(3000)
-              .ease(d3.easeLinear)
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              .attrTween("r", () => d3.interpolate(0, 200) as any)
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              .attrTween("opacity", () => d3.interpolate(1, 0) as any)
-              .on("end", repeat);
-          });
+        const animatePulse = () => {
+          pulse
+            .attr("r", 12)
+            .attr("opacity", 0.8)
+            .transition()
+            .duration(2000)
+            .ease(d3.easeCircleOut)
+            .attr("r", 50)
+            .attr("opacity", 0)
+            .on("end", animatePulse);
+        };
+        animatePulse();
       }
     }
 
@@ -427,19 +456,21 @@ export const GuestMapSlide: React.FC<GuestMapSlideProps> = ({
   return (
     <div className={`flex flex-col h-full ${hideHeader ? '' : 'pt-16 px-6'} relative overflow-hidden ${className}`}>
 
-      {/* LOCAL MODE BACKGROUND IMAGE LAYER */}
+      {/* LOCAL MODE BACKGROUND MAP LAYER - DC Neighborhood */}
       {viewMode === 'LOCAL' && (
         <div className="absolute inset-0 z-0">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
+          {/* Dark-themed map tile from CartoDB/Stamen centered on DC */}
           <div
-            className="absolute inset-0 bg-cover bg-center"
+            className="absolute inset-0 bg-cover bg-center opacity-60"
             style={{
-              backgroundImage: 'url("https://images.unsplash.com/photo-1569336415962-a4bd9f69cd83?q=80&w=2689&auto=format&fit=crop")',
-              transform: 'scale(1.1)',
-              filter: 'invert(1) grayscale(1) contrast(1.2)'
+              backgroundImage: `url("https://api.mapbox.com/styles/v1/mapbox/dark-v11/static/${data.homeCoordinates[0]},${data.homeCoordinates[1]},13,0/800x1200@2x?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw")`,
+              transform: 'scale(1.2)',
             }}
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent"></div>
+          {/* Gradient overlay for depth */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-black/30"></div>
+          {/* Subtle vignette */}
+          <div className="absolute inset-0" style={{ background: 'radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.6) 100%)' }}></div>
         </div>
       )}
 
@@ -468,18 +499,19 @@ export const GuestMapSlide: React.FC<GuestMapSlideProps> = ({
 
         {/* Local Legend Overlay */}
         {viewMode === 'LOCAL' && !loading && !hideHeader && (
-          <div className="absolute bottom-4 right-4 bg-black/40 backdrop-blur-md p-3 rounded-xl border border-white/10 text-[10px] font-mono animate-fade-in">
-            <div className="flex items-center gap-2 mb-1">
-              <div className="w-2 h-2 rounded-full bg-[#ef4444]"></div>
-              <span className="text-white/70">YOU</span>
+          <div className="absolute bottom-4 right-4 bg-black/50 backdrop-blur-lg p-4 rounded-2xl border border-white/10 text-[10px] font-sans animate-fade-in shadow-xl">
+            <div className="text-[8px] uppercase tracking-widest text-white/40 mb-3 font-medium">Neighborhood</div>
+            <div className="flex items-center gap-3 mb-2">
+              <div className="w-3 h-3 rounded-full bg-[#ef4444] shadow-lg shadow-red-500/30"></div>
+              <span className="text-white/80 font-medium">Your Stay</span>
             </div>
-            <div className="flex items-center gap-2 mb-1">
-              <div className="w-2 h-2 rounded-full bg-[#fbbf24]"></div>
-              <span className="text-white/70">COFFEE</span>
+            <div className="flex items-center gap-3 mb-2">
+              <div className="w-3 h-3 rounded-full bg-[#fbbf24] shadow-lg shadow-amber-500/30"></div>
+              <span className="text-white/80 font-medium">Coffee Shops</span>
             </div>
-            <div className="flex items-center gap-2">
-              <div className="w-2 h-2 rounded-full bg-[#22d3ee]"></div>
-              <span className="text-white/70">BUSINESS</span>
+            <div className="flex items-center gap-3">
+              <div className="w-3 h-3 rounded-full bg-[#22d3ee] shadow-lg shadow-cyan-500/30"></div>
+              <span className="text-white/80 font-medium">Local Spots</span>
             </div>
           </div>
         )}
