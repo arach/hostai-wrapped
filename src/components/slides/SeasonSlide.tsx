@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { HostData } from '@/lib/types';
 import { typography } from '@/lib/design-system';
-import { BarChart, Bar, XAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
+import { BarChart, Bar, XAxis, Tooltip, Cell } from 'recharts';
 
 interface SeasonSlideProps {
   data: HostData;
@@ -11,30 +11,35 @@ interface SeasonSlideProps {
 
 export const SeasonSlide: React.FC<SeasonSlideProps> = ({ data }) => {
   const maxOccupancy = Math.max(...data.monthlyOccupancy.map(d => d.occupancy));
-  const [isReady, setIsReady] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+  const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
 
-  // Use ResizeObserver to detect when container has actual dimensions
+  // Measure container dimensions directly
   useEffect(() => {
-    const container = containerRef.current;
-    if (!container) return;
-
-    const observer = new ResizeObserver((entries) => {
-      for (const entry of entries) {
-        if (entry.contentRect.width > 0 && entry.contentRect.height > 0) {
-          setIsReady(true);
+    const updateDimensions = () => {
+      if (containerRef.current) {
+        const { width, height } = containerRef.current.getBoundingClientRect();
+        if (width > 0 && height > 0) {
+          setDimensions({ width: width - 32, height: height - 32 }); // Account for padding
         }
       }
+    };
+
+    // Initial measurement with RAF to ensure layout is complete
+    const rafId = requestAnimationFrame(() => {
+      updateDimensions();
     });
 
-    observer.observe(container);
+    // Also measure after a short delay as backup
+    const timer = setTimeout(updateDimensions, 100);
 
-    // Also set ready after a small delay as fallback
-    const timer = setTimeout(() => setIsReady(true), 150);
+    // Listen for resize
+    window.addEventListener('resize', updateDimensions);
 
     return () => {
-      observer.disconnect();
+      cancelAnimationFrame(rafId);
       clearTimeout(timer);
+      window.removeEventListener('resize', updateDimensions);
     };
   }, []);
 
@@ -52,30 +57,32 @@ export const SeasonSlide: React.FC<SeasonSlideProps> = ({ data }) => {
       <div className="flex-1 w-full min-h-[200px] flex flex-col justify-end pb-8 animate-slide-up">
         <h3 className={`${typography.sublabel} mb-4 pl-2`}>Occupancy Rhythm</h3>
         <div ref={containerRef} className="h-64 w-full bg-black/20 rounded-xl p-4 backdrop-blur-sm border border-white/10">
-            {isReady && (
-              <ResponsiveContainer width="100%" height={200} minWidth={200}>
-                <BarChart data={data.monthlyOccupancy}>
-                    <XAxis
-                        dataKey="month"
-                        axisLine={false}
-                        tickLine={false}
-                        tick={{ fill: 'rgba(255,255,255,0.5)', fontSize: 10 }}
-                        interval={0}
+            {dimensions.width > 0 && (
+              <BarChart
+                width={dimensions.width}
+                height={Math.min(dimensions.height, 200)}
+                data={data.monthlyOccupancy}
+              >
+                <XAxis
+                    dataKey="month"
+                    axisLine={false}
+                    tickLine={false}
+                    tick={{ fill: 'rgba(255,255,255,0.5)', fontSize: 10 }}
+                    interval={0}
+                />
+                <Tooltip
+                    cursor={{fill: 'rgba(255,255,255,0.1)'}}
+                    contentStyle={{ backgroundColor: '#1e1e1e', borderColor: '#333', color: '#fff' }}
+                />
+                <Bar dataKey="occupancy" radius={[4, 4, 0, 0]}>
+                  {data.monthlyOccupancy.map((entry, index) => (
+                    <Cell
+                        key={`cell-${index}`}
+                        fill={entry.occupancy === maxOccupancy ? '#ffffff' : 'rgba(255,255,255,0.4)'}
                     />
-                    <Tooltip
-                        cursor={{fill: 'rgba(255,255,255,0.1)'}}
-                        contentStyle={{ backgroundColor: '#1e1e1e', borderColor: '#333', color: '#fff' }}
-                    />
-                    <Bar dataKey="occupancy" radius={[4, 4, 0, 0]}>
-                    {data.monthlyOccupancy.map((entry, index) => (
-                        <Cell
-                            key={`cell-${index}`}
-                            fill={entry.occupancy === maxOccupancy ? '#ffffff' : 'rgba(255,255,255,0.4)'}
-                        />
-                    ))}
-                    </Bar>
-                </BarChart>
-              </ResponsiveContainer>
+                  ))}
+                </Bar>
+              </BarChart>
             )}
         </div>
       </div>

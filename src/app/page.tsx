@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { StoryLayout } from '@/components/StoryLayout';
 import { IntroSlide } from '@/components/slides/IntroSlide';
@@ -26,7 +26,16 @@ const gradients: Record<SlideType, string> = {
 
 const AUTO_ADVANCE_DURATION = 8000;
 
+// Wrapper component to handle suspense for useSearchParams
 export default function Home() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-black" />}>
+      <HomeContent />
+    </Suspense>
+  );
+}
+
+function HomeContent() {
   const searchParams = useSearchParams();
 
   // Global State
@@ -170,7 +179,7 @@ export default function Home() {
       case SlideType.INTRO: return <IntroSlide audience={audience} data={mockHostData} />;
       case SlideType.MAP: return <GuestMapSlide data={mockHostData} viewMode={mapViewMode} isPlaying={isMapPlaying} audience={audience} />;
       case SlideType.STATS: return <StatsSlide data={mockHostData} audience={audience} />;
-      case SlideType.SEASONS: return <SeasonSlide data={mockHostData} />;
+      case SlideType.SEASONS: return <SeasonSlide key={`season-${currentSlideIndex}`} data={mockHostData} />;
       case SlideType.REVIEW: return <ReviewSlide data={mockHostData} />;
       case SlideType.OUTRO: return <OutroSlide summary={aiSummary} isLoading={isSummaryLoading} audience={audience} />;
       default: return null;
