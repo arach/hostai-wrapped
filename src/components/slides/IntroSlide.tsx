@@ -44,7 +44,7 @@ export const IntroSlide: React.FC<IntroSlideProps> = ({ audience, data }) => {
   return (
     <div className="flex flex-col justify-center h-full px-8 pb-20">
       <div className="animate-slide-up">
-        <h2 className="text-7xl md:text-8xl font-serif font-bold tracking-tighter leading-[0.85] mb-10 whitespace-pre-line bg-clip-text text-transparent bg-gradient-to-b from-white via-white to-white/50 drop-shadow-sm">
+        <h2 className="text-5xl md:text-6xl font-serif font-bold tracking-tighter leading-[0.9] mb-8 whitespace-pre-line bg-clip-text text-transparent bg-gradient-to-b from-white via-white to-white/50 drop-shadow-sm">
           {content.title}
         </h2>
         <div className="w-16 h-1 bg-white/30 mb-10 rounded-full"></div>

@@ -79,16 +79,27 @@ export default function Home() {
     fetchSummary();
   }, [audience]);
 
-  // Conditional Background Image logic
+  // Conditional Background Image logic - Full bleed property images
   const getBackgroundImage = () => {
-     // Intro slide background
+     // Intro slide background - welcoming property shots
      if (currentSlide === SlideType.INTRO) {
-         if (audience === 'GUEST') return "https://images.unsplash.com/photo-1572331165267-854da2b00ca1?q=80&w=2746&auto=format&fit=crop"; // Luxury Exterior
+         if (audience === 'GUEST') return "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?q=80&w=2675&auto=format&fit=crop"; // Beautiful home exterior
          if (audience === 'HOSTAI') return "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&auto=format&fit=crop"; // Tech/Global Network
-         return "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?q=80&w=2670&auto=format&fit=crop"; // Living Room
+         if (audience === 'STAFF') return "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=2670&auto=format&fit=crop"; // Warm property interior
+         return "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?q=80&w=2653&auto=format&fit=crop"; // Luxury living room
      }
-     if (currentSlide === SlideType.REVIEW) return "https://images.unsplash.com/photo-1560185009-dddeb820c7b7?q=80&w=2549&auto=format&fit=crop"; // Towels/Detail
-     if (currentSlide === SlideType.OUTRO) return "https://images.unsplash.com/photo-1616047006789-b7af5afb8c20?q=80&w=2680&auto=format&fit=crop"; // Dining/Open space
+     // Seasons slide - cozy seasonal property vibes
+     if (currentSlide === SlideType.SEASONS) {
+         return "https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?q=80&w=2670&auto=format&fit=crop"; // Warm interior with natural light
+     }
+     // Review slide - detail shots that feel personal
+     if (currentSlide === SlideType.REVIEW) {
+         return "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?q=80&w=2670&auto=format&fit=crop"; // Bedroom/cozy detail
+     }
+     // Outro slide - aspirational property shot
+     if (currentSlide === SlideType.OUTRO) {
+         return "https://images.unsplash.com/photo-1600585154526-990dced4db0d?q=80&w=2687&auto=format&fit=crop"; // Beautiful home with pool/outdoor
+     }
      return undefined;
   };
 
