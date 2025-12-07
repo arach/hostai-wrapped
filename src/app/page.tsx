@@ -44,7 +44,7 @@ export default function Home() {
   const [aiSummary, setAiSummary] = useState<string>("");
   const [isSummaryLoading, setIsSummaryLoading] = useState(false);
 
-  // Handle URL params: ?view=guest, ?view=owner, etc.
+  // Handle legacy URL params: ?view=guest, ?view=owner (route params preferred now)
   useEffect(() => {
     const viewParam = searchParams.get('view');
     if (viewParam) {
@@ -57,7 +57,7 @@ export default function Home() {
       const newAudience = viewMap[viewParam.toLowerCase()];
       if (newAudience) {
         setAudience(newAudience);
-        setShowControls(false); // Hide admin controls for direct links
+        setShowControls(false);
       }
     }
   }, [searchParams]);
