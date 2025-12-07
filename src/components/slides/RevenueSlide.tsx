@@ -78,20 +78,20 @@ export const StatsSlide: React.FC<StatsSlideProps> = ({ data, audience }) => {
   const renderGuestView = () => (
     <>
       {/* Background Map Visualization - Embedded directly for Guest Impact */}
-      <div className="absolute inset-0 z-0 pointer-events-none">
+      <div className="absolute inset-0 pointer-events-none" style={{ zIndex: 0 }}>
           <GuestMapSlide
             data={data}
             viewMode="LOCAL"
             isPlaying={true}
             audience={audience}
             hideHeader={true}
-            className="w-full h-full"
+            className="w-full h-full opacity-40"
           />
-          {/* Gradient overlay to ensure text readability at the bottom */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent" />
       </div>
+      {/* Gradient overlay - separate layer above map */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/70 to-black/40 pointer-events-none" style={{ zIndex: 1 }} />
 
-      <div className="relative z-10 animate-slide-up">
+      <div className="relative animate-slide-up" style={{ zIndex: 2 }}>
         <div className="flex items-center justify-between mb-6">
             <div className="inline-block bg-blue-500/20 text-blue-300 border border-blue-500/30 px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-[0.2em] backdrop-blur-sm font-sans">
             Community Impact
@@ -109,7 +109,7 @@ export const StatsSlide: React.FC<StatsSlideProps> = ({ data, audience }) => {
         </p>
       </div>
 
-      <div className="relative z-10 animate-slide-up grid grid-cols-2 gap-4 font-sans" style={{ animationDelay: '0.2s' }}>
+      <div className="relative animate-slide-up grid grid-cols-2 gap-4 font-sans" style={{ animationDelay: '0.2s', zIndex: 2 }}>
           {/* Local Shops */}
           <div className="bg-white/5 p-5 rounded-2xl border border-white/10 backdrop-blur-sm shadow-xl">
               <div className="text-2xl font-bold mb-1 tracking-tight">{data.localBusinessesSupported}</div>
