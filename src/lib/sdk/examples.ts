@@ -7,7 +7,7 @@ import { WrappedSDK } from './index';
 // Example Owner Data
 export const exampleOwnerData = WrappedSDK.generateOwnerData({
   year: 2025,
-  propertyName: 'Sojourn Luxury',
+  propertyName: 'Horizon Stays',
   propertyLocation: {
     coordinates: [-77.0369, 38.9072],
     city: 'Washington',
@@ -15,33 +15,33 @@ export const exampleOwnerData = WrappedSDK.generateOwnerData({
   },
 
   // Revenue & Business
-  totalRevenue: 900000,
-  otaSavings: 158000,
-  directBookingIncrease: 24,
-  occupancyRate: 88,
+  totalRevenue: 824000,
+  otaSavings: 142000,
+  directBookingIncrease: 28,
+  occupancyRate: 84,
 
   // Volume
-  totalGuests: 842,
-  totalNights: 80234,
-  websiteVisits: 12405,
+  totalGuests: 756,
+  totalNights: 68420,
+  websiteVisits: 10892,
 
   // Operations
-  sheetsCleaned: 3450,
-  toiletriesRestocked: 1240,
-  batteriesReplaced: 85,
+  sheetsCleaned: 2980,
+  toiletriesRestocked: 1085,
+  batteriesReplaced: 72,
 
   // Impact
-  economicImpact: 1250000,
-  localBusinessesSupported: 28,
+  economicImpact: 1180000,
+  localBusinessesSupported: 24,
 
   // Highlights
-  busiestDate: 'May 22',
+  busiestDate: 'June 14',
   biggestBooking: {
-    amount: 36709,
-    nights: 170,
-    propertyName: 'Luxury Apartment steps to The Dupont Circle Metro',
+    amount: 32450,
+    nights: 156,
+    propertyName: 'Urban Loft with Skyline Views',
   },
-  topSearchTerm: 'capitol hill apartments',
+  topSearchTerm: 'downtown luxury rentals',
 
   // Monthly breakdown
   monthlyData: [
@@ -70,27 +70,27 @@ export const exampleOwnerData = WrappedSDK.generateOwnerData({
 
   // Spotlight review
   spotlightReview: {
-    guestName: 'Sarah Jenkins',
-    text: "The absolute best stay we've had in DC. The attention to detail was unmatched.",
+    guestName: 'Michael Torres',
+    text: 'Incredible experience from start to finish. The space was immaculate.',
     rating: 5,
-    propertyName: 'Sojourn Classic DC Rowhouse',
+    propertyName: 'Horizon Premier Suite',
   },
 });
 
 // Example Guest Data
 export const exampleGuestData = WrappedSDK.generateGuestData({
   year: 2025,
-  propertyName: 'Sojourn Luxury',
+  propertyName: 'Horizon Stays',
   propertyLocation: {
     coordinates: [-77.0369, 38.9072],
     city: 'Washington',
     region: 'DC',
   },
 
-  guestName: 'Alex Chen',
+  guestName: 'Jordan Rivera',
   origin: {
-    city: 'San Francisco',
-    coordinates: [-122.4194, 37.7749],
+    city: 'Austin',
+    coordinates: [-97.7431, 30.2672],
   },
   stayDates: {
     checkIn: '2025-03-15',
@@ -103,13 +103,13 @@ export const exampleGuestData = WrappedSDK.generateGuestData({
   coffeesPoured: 14,
 
   communityImpact: {
-    totalEconomicImpact: 1250000,
-    localBusinessesSupported: 28,
-    totalGuestsThisYear: 842,
+    totalEconomicImpact: 1180000,
+    localBusinessesSupported: 24,
+    totalGuestsThisYear: 756,
   },
 
   theirReview: {
-    text: 'Amazing location and beautiful space. Will definitely be back!',
+    text: 'Perfect getaway spot. The neighborhood guide was super helpful!',
     rating: 5,
   },
 });
@@ -117,14 +117,14 @@ export const exampleGuestData = WrappedSDK.generateGuestData({
 // Example Staff Data
 export const exampleStaffData = WrappedSDK.generateStaffData({
   year: 2025,
-  propertyName: 'Sojourn Luxury',
+  propertyName: 'Horizon Stays',
   propertyLocation: {
     coordinates: [-77.0369, 38.9072],
     city: 'Washington',
     region: 'DC',
   },
 
-  staffName: 'Maria Garcia',
+  staffName: 'Elena Martinez',
   role: 'Lead Housekeeper',
 
   cleaningHours: 1240,

@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { StoryLayout } from '@/components/StoryLayout';
 import { IntroSlide } from '@/components/slides/IntroSlide';
 import { StatsSlide } from '@/components/slides/RevenueSlide';
@@ -26,11 +27,14 @@ const gradients: Record<SlideType, string> = {
 const AUTO_ADVANCE_DURATION = 8000;
 
 export default function Home() {
+  const searchParams = useSearchParams();
+
   // Global State
   const [audience, setAudience] = useState<Audience>('OWNER');
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
   const [progress, setProgress] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
+  const [showControls, setShowControls] = useState(true);
 
   // Map Controls State
   const [mapViewMode, setMapViewMode] = useState<'GLOBE' | 'MAP' | 'LOCAL'>('GLOBE');
@@ -39,6 +43,24 @@ export default function Home() {
   // AI Summary State (Pre-fetching)
   const [aiSummary, setAiSummary] = useState<string>("");
   const [isSummaryLoading, setIsSummaryLoading] = useState(false);
+
+  // Handle URL params: ?view=guest, ?view=owner, etc.
+  useEffect(() => {
+    const viewParam = searchParams.get('view');
+    if (viewParam) {
+      const viewMap: Record<string, Audience> = {
+        'owner': 'OWNER',
+        'guest': 'GUEST',
+        'staff': 'STAFF',
+        'hostai': 'HOSTAI',
+      };
+      const newAudience = viewMap[viewParam.toLowerCase()];
+      if (newAudience) {
+        setAudience(newAudience);
+        setShowControls(false); // Hide admin controls for direct links
+      }
+    }
+  }, [searchParams]);
 
   // Define Slide Paths based on Audience
   const getSlides = (aud: Audience): SlideType[] => {
@@ -181,30 +203,32 @@ export default function Home() {
          </div>
       </div>
 
-      {/* 2. Admin Control Panel Area */}
-      <div className="w-full bg-zinc-950 border-t border-zinc-900 p-6 flex justify-center items-start z-20 shadow-[0_-10px_40px_rgba(0,0,0,0.5)]">
-         <AdminControls
-            audience={audience}
-            setAudience={(a) => {
-                setAudience(a);
-                setCurrentSlideIndex(0); // Reset to start when changing audience
-                setProgress(0);
-            }}
-            currentSlideIndex={currentSlideIndex}
-            slides={slides}
-            setCurrentSlideIndex={(idx) => {
-                setCurrentSlideIndex(idx);
-                setProgress(0);
-            }}
-            isPaused={isPaused}
-            setIsPaused={setIsPaused}
-            mapViewMode={mapViewMode}
-            setMapViewMode={setMapViewMode}
-            isMapPlaying={isMapPlaying}
-            setIsMapPlaying={setIsMapPlaying}
-            currentSlideType={currentSlide}
-         />
-      </div>
+      {/* 2. Admin Control Panel Area - hidden when accessed via direct link */}
+      {showControls && (
+        <div className="w-full bg-zinc-950 border-t border-zinc-900 p-6 flex justify-center items-start z-20 shadow-[0_-10px_40px_rgba(0,0,0,0.5)]">
+           <AdminControls
+              audience={audience}
+              setAudience={(a) => {
+                  setAudience(a);
+                  setCurrentSlideIndex(0); // Reset to start when changing audience
+                  setProgress(0);
+              }}
+              currentSlideIndex={currentSlideIndex}
+              slides={slides}
+              setCurrentSlideIndex={(idx) => {
+                  setCurrentSlideIndex(idx);
+                  setProgress(0);
+              }}
+              isPaused={isPaused}
+              setIsPaused={setIsPaused}
+              mapViewMode={mapViewMode}
+              setMapViewMode={setMapViewMode}
+              isMapPlaying={isMapPlaying}
+              setIsMapPlaying={setIsMapPlaying}
+              currentSlideType={currentSlide}
+           />
+        </div>
+      )}
     </div>
   );
 }

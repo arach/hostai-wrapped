@@ -1,0 +1,34 @@
+{
+  "id": "550e8400-e29b-41d4-a716-446655440000",
+  "scope": "guest",
+  "year": 2025,
+  "generatedAt": "2025-01-15T10:30:00.000Z",
+  "propertyName": "Horizon Stays",
+  "propertyLocation": {
+    "coordinates": [-77.0369, 38.9072],
+    "city": "Washington",
+    "region": "DC"
+  },
+  "guestName": "Jordan Rivera",
+  "origin": {
+    "city": "Austin",
+    "coordinates": [-97.7431, 30.2672]
+  },
+  "stayDates": {
+    "checkIn": "2025-03-15",
+    "checkOut": "2025-03-22"
+  },
+  "nightsStayed": 7,
+  "localSpend": 1840,
+  "savedVsHotel": 420,
+  "coffeesPoured": 14,
+  "communityImpact": {
+    "totalEconomicImpact": 1180000,
+    "localBusinessesSupported": 24,
+    "totalGuestsThisYear": 756
+  },
+  "theirReview": {
+    "text": "Perfect getaway spot. The neighborhood guide was super helpful!",
+    "rating": 5
+  }
+}

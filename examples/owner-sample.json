@@ -1,0 +1,58 @@
+{
+  "id": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+  "scope": "owner",
+  "year": 2025,
+  "generatedAt": "2025-01-15T10:30:00.000Z",
+  "propertyName": "Horizon Stays",
+  "propertyLocation": {
+    "coordinates": [-77.0369, 38.9072],
+    "city": "Washington",
+    "region": "DC"
+  },
+  "totalRevenue": 824000,
+  "otaSavings": 142000,
+  "directBookingIncrease": 28,
+  "occupancyRate": 84,
+  "totalGuests": 756,
+  "totalNights": 68420,
+  "websiteVisits": 10892,
+  "sheetsCleaned": 2980,
+  "toiletriesRestocked": 1085,
+  "batteriesReplaced": 72,
+  "economicImpact": 1180000,
+  "localBusinessesSupported": 24,
+  "busiestDate": "June 14",
+  "biggestBooking": {
+    "amount": 32450,
+    "nights": 156,
+    "propertyName": "Urban Loft with Skyline Views"
+  },
+  "topSearchTerm": "downtown luxury rentals",
+  "monthlyData": [
+    { "month": "Jan", "occupancy": 65, "revenue": 45000 },
+    { "month": "Feb", "occupancy": 70, "revenue": 52000 },
+    { "month": "Mar", "occupancy": 85, "revenue": 78000 },
+    { "month": "Apr", "occupancy": 92, "revenue": 89000 },
+    { "month": "May", "occupancy": 98, "revenue": 95000 },
+    { "month": "Jun", "occupancy": 95, "revenue": 92000 },
+    { "month": "Jul", "occupancy": 88, "revenue": 85000 },
+    { "month": "Aug", "occupancy": 80, "revenue": 75000 },
+    { "month": "Sep", "occupancy": 90, "revenue": 88000 },
+    { "month": "Oct", "occupancy": 94, "revenue": 91000 },
+    { "month": "Nov", "occupancy": 82, "revenue": 70000 },
+    { "month": "Dec", "occupancy": 75, "revenue": 60000 }
+  ],
+  "guestOrigins": [
+    { "city": "London", "country": "UK", "count": 124, "coordinates": [-0.1276, 51.5074] },
+    { "city": "New York", "country": "USA", "count": 98, "coordinates": [-74.006, 40.7128] },
+    { "city": "Los Angeles", "country": "USA", "count": 85, "coordinates": [-118.2437, 34.0522] },
+    { "city": "Paris", "country": "France", "count": 65, "coordinates": [2.3522, 48.8566] },
+    { "city": "Tokyo", "country": "Japan", "count": 42, "coordinates": [139.6917, 35.6895] }
+  ],
+  "spotlightReview": {
+    "guestName": "Michael Torres",
+    "text": "Incredible experience from start to finish. The space was immaculate.",
+    "rating": 5,
+    "propertyName": "Horizon Premier Suite"
+  }
+}

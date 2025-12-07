@@ -1,0 +1,31 @@
+{
+  "id": "6ba7b810-9dad-11d1-80b4-00c04fd430c8",
+  "scope": "staff",
+  "year": 2025,
+  "generatedAt": "2025-01-15T10:30:00.000Z",
+  "propertyName": "Horizon Stays",
+  "propertyLocation": {
+    "coordinates": [-77.0369, 38.9072],
+    "city": "Washington",
+    "region": "DC"
+  },
+  "staffName": "Elena Martinez",
+  "role": "Lead Housekeeper",
+  "cleaningHours": 1240,
+  "turnoversCompleted": 312,
+  "fiveStarReviewsEarned": 89,
+  "maintenanceResolved": 45,
+  "sheetsChanged": 1872,
+  "towelsFolded": 3744,
+  "batteriesReplaced": 28,
+  "guestCompliments": [
+    { "text": "Room was spotless!", "date": "2025-04-12" },
+    { "text": "Best turnover service ever", "date": "2025-06-23" },
+    { "text": "The attention to detail is incredible", "date": "2025-09-05" }
+  ],
+  "teamStats": {
+    "totalCleaningHours": 1920,
+    "totalFiveStarReviews": 134,
+    "propertiesManaged": 12
+  }
+}

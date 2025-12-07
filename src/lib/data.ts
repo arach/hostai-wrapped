@@ -1,42 +1,42 @@
 import { HostData } from './types';
 
 export const mockHostData: HostData = {
-  hostName: "Sojourn Luxury",
+  hostName: "Horizon Stays",
   year: 2025,
-  totalGuests: 842,
-  totalNights: 80234,
-  totalRevenue: 900000,
-  otaSavings: 158000,
+  totalGuests: 756,
+  totalNights: 68420,
+  totalRevenue: 824000,
+  otaSavings: 142000,
 
   // New Owner Business Metrics
-  directBookingIncrease: 24,
-  occupancyRate: 88,
+  directBookingIncrease: 28,
+  occupancyRate: 84,
 
   // New Stats
-  websiteVisits: 12405,
-  sheetsCleaned: 3450,
-  toiletriesRestocked: 1240,
-  batteriesReplaced: 85,
-  economicImpact: 1250000,
+  websiteVisits: 10892,
+  sheetsCleaned: 2980,
+  toiletriesRestocked: 1085,
+  batteriesReplaced: 72,
+  economicImpact: 1180000,
 
   // Synthetic Data for different audiences
-  guestSavings: 240, // Average saving per guest
-  totalDistanceTraveled: 1245032, // km
-  cleaningHours: 2150,
-  fiveStarReviewsEarned: 148,
-  maintenanceResolved: 342,
-  localBusinessesSupported: 28,
-  communityCoffeeCount: 3450,
+  guestSavings: 215, // Average saving per guest
+  totalDistanceTraveled: 1089450, // km
+  cleaningHours: 1920,
+  fiveStarReviewsEarned: 134,
+  maintenanceResolved: 298,
+  localBusinessesSupported: 24,
+  communityCoffeeCount: 2890,
 
   // Platform Stats
-  platformGlobalRevenue: 450000000,
-  aiConversationsHandled: 2500000,
-  totalPropertiesManaged: 12500,
+  platformGlobalRevenue: 520000000,
+  aiConversationsHandled: 3200000,
+  totalPropertiesManaged: 14800,
 
   homeCoordinates: [-77.0369, 38.9072], // Washington DC
 
   // Specific Guest User (for map highlight)
-  userOrigin: { city: "San Francisco", coordinates: [-122.4194, 37.7749] },
+  userOrigin: { city: "Austin", coordinates: [-97.7431, 30.2672] },
 
   topGuestOrigins: [
     { city: "London", country: "UK", count: 124, coordinates: [-0.1276, 51.5074] },
@@ -98,12 +98,12 @@ export const mockHostData: HostData = {
     { city: "Bogota", country: "Colombia", count: 8, coordinates: [-74.0721, 4.7110] },
     { city: "Lima", country: "Peru", count: 5, coordinates: [-77.0428, -12.0464] }
   ],
-  topSearchTerm: "capitol hill apartments",
-  busiestDate: "May 22",
+  topSearchTerm: "downtown luxury rentals",
+  busiestDate: "June 14",
   biggestBooking: {
-    amount: 36709,
-    nights: 170,
-    property: "Luxury Apartment steps to The Dupont Circle Metro"
+    amount: 32450,
+    nights: 156,
+    property: "Urban Loft with Skyline Views"
   },
   monthlyOccupancy: [
     { month: 'J', occupancy: 65, revenue: 45000 },
@@ -120,9 +120,9 @@ export const mockHostData: HostData = {
     { month: 'D', occupancy: 75, revenue: 60000 },
   ],
   spotlightReview: {
-    guest: "Sarah Jenkins",
-    text: "The absolute best stay we've had in DC. The attention to detail was unmatched and the location was perfect.",
+    guest: "Michael Torres",
+    text: "Incredible experience from start to finish. The space was immaculate and the host communication was top-notch.",
     rating: 5,
-    property: "Sojourn Classic DC Rowhouse"
+    property: "Horizon Premier Suite"
   }
 };

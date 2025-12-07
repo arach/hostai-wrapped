@@ -57,7 +57,7 @@ export const StoryLayout: React.FC<StoryLayoutProps> = ({
         {audience !== 'HOSTAI' && (
             <div className="absolute top-8 left-0 right-0 z-30 flex justify-center">
                 <div className="bg-white/10 backdrop-blur-md border border-white/10 px-4 py-1.5 rounded-full shadow-xl">
-                    <h1 className="text-white font-serif font-bold text-lg tracking-tight">sojourn</h1>
+                    <h1 className="text-white font-serif font-bold text-lg tracking-tight">horizon</h1>
                 </div>
             </div>
         )}
