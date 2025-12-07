@@ -48,7 +48,7 @@ export const IntroSlide: React.FC<IntroSlideProps> = ({ audience, data }) => {
           {content.title}
         </h2>
         <div className="w-16 h-1 bg-white/30 mb-10 rounded-full"></div>
-        <p className="text-xl md:text-2xl font-medium font-sans text-white leading-relaxed mb-16 max-w-[95%] tracking-wide drop-shadow-md shadow-black/50">
+        <p className="text-lg md:text-xl font-light text-white/90 leading-relaxed mb-16 max-w-[90%] tracking-tight drop-shadow-md" style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", system-ui, sans-serif' }}>
           {content.subtitle}
         </p>
         <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/20 rounded-full pl-5 pr-2 py-2 cursor-pointer hover:bg-white/20 transition-colors shadow-lg">
