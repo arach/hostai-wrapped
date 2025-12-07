@@ -134,6 +134,10 @@ export interface OwnerData {
   economicImpact: number;
   localBusinessesSupported: number;
 
+  // Guest engagement
+  fiveStarReviewsEarned?: number;
+  guestConversationsHandled?: number;  // AI-assisted conversations
+
   // Highlights
   busiestDate: string;
   biggestBooking?: {
