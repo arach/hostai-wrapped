@@ -1,57 +1,44 @@
 # Data Schema Reference
 
-Complete schema documentation for HostAI Wrapped data files.
-
 ## Overview
 
-The system uses a **privacy-first, consolidated data architecture**:
-
-- **One JSON file per property manager** containing all audience data
-- **One platform file** for HostAI global statistics
+- **One JSON file per property manager** - contains owner, staff, and guest data
+- **One platform file** - HostAI global statistics
 - **No PII** - all identifiers are one-way hashes
 
-```
-data/
-├── platform.json           # HostAI global stats
-└── {pmHash}.json           # One file per property manager
-```
+## Privacy & Identification
 
----
+This system stores **zero personally identifiable information**. No names, emails, or addresses appear in any data file.
+
+**How it works:** When generating data, emails are converted to 6-character hashes using a one-way function. The hash `j4w8v2` might represent `jordan@email.com`, but you cannot reverse the hash to get the email back. The mapping only works in one direction.
+
+**Guest matching flow:**
+1. Guest receives a link like `wrapped.host.ai/s/a7f3c2/guest?g=j4w8v2`
+2. Alternatively, guest enters their email on a lookup page
+3. System computes `hash(email)` → `j4w8v2`
+4. System looks up `guests["j4w8v2"]` in the PM's data file
+5. Guest sees their personalized Wrapped - without their email ever being stored
+
+**Why this matters:** Even if the data files leak, there's no way to identify who the guests are. The hashes are meaningless without the original emails, and those are never stored in this system.
 
 ## Property Manager File (`{pmHash}.json`)
 
-The main data file. Contains owner stats, staff records, and guest records.
-
-### Root Structure
-
 ```typescript
 interface PropertyManagerData {
-  /** Hashed property manager ID (6 chars) */
-  pmId: string;
-
-  /** Report year */
+  pmId: string;                    // 6-char hash
   year: number;
+  generatedAt: string;             // ISO timestamp
 
-  /** ISO timestamp when generated */
-  generatedAt: string;
-
-  /** Owner/PM aggregate statistics */
   owner: OwnerData;
+  staff: Record<string, StaffRecord>;   // key = hash(email)
+  guests: Record<string, GuestRecord>;  // key = hash(email)
 
-  /** Staff records keyed by hash(staff_email) */
-  staff: Record<string, StaffRecord>;
-
-  /** Guest records keyed by hash(guest_email) */
-  guests: Record<string, GuestRecord>;
-
-  /** Optional: Aggregate stats across all staff */
   staffAggregates?: {
     totalCleaningHours: number;
     totalFiveStarReviews: number;
     totalStaffCount: number;
   };
 
-  /** Optional: Aggregate stats across all guests */
   guestAggregates?: {
     totalCoffeesPoured: number;
     totalLocalSpend: number;
@@ -60,425 +47,134 @@ interface PropertyManagerData {
 }
 ```
 
----
-
 ## Owner Data
-
-Aggregate statistics for the property manager's portfolio.
 
 ```typescript
 interface OwnerData {
-  /** Display name for the property/brand */
   propertyName: string;
-
-  /** Primary location */
   propertyLocation: {
     city: string;
     region?: string;
     country?: string;
-    coordinates: [number, number];  // [longitude, latitude]
+    coordinates: [number, number];  // [lng, lat]
   };
 
-  // ─────────────────────────────────────────────────────────────
-  // REVENUE METRICS
-  // ─────────────────────────────────────────────────────────────
-
-  /** Total revenue in dollars */
   totalRevenue: number;
-
-  /** Savings from avoiding OTA fees (optional) */
   otaSavings?: number;
-
-  /** Year-over-year direct booking increase (percentage) */
-  directBookingIncrease: number;
-
-  // ─────────────────────────────────────────────────────────────
-  // OCCUPANCY METRICS
-  // ─────────────────────────────────────────────────────────────
-
-  /** Average occupancy rate (percentage, 0-100) */
-  occupancyRate: number;
-
-  /** Total unique guests hosted */
+  directBookingIncrease: number;    // % YoY
+  occupancyRate: number;            // %
   totalGuests: number;
-
-  /** Total nights booked */
   totalNights: number;
 
-  // ─────────────────────────────────────────────────────────────
-  // DIGITAL PRESENCE
-  // ─────────────────────────────────────────────────────────────
-
-  /** Website visits (optional) */
   websiteVisits?: number;
-
-  /** Top search term driving traffic (optional) */
   topSearchTerm?: string;
 
-  // ─────────────────────────────────────────────────────────────
-  // OPERATIONS
-  // ─────────────────────────────────────────────────────────────
-
-  /** Total sheets cleaned (optional) */
   sheetsCleaned?: number;
-
-  /** Toiletries restocked (optional) */
   toiletriesRestocked?: number;
-
-  /** Batteries replaced (optional) */
   batteriesReplaced?: number;
 
-  // ─────────────────────────────────────────────────────────────
-  // COMMUNITY IMPACT
-  // ─────────────────────────────────────────────────────────────
-
-  /** Total economic impact in dollars */
   economicImpact: number;
-
-  /** Number of local businesses supported */
   localBusinessesSupported: number;
 
-  // ─────────────────────────────────────────────────────────────
-  // HIGHLIGHTS
-  // ─────────────────────────────────────────────────────────────
+  busiestDate: string;              // e.g., "June 14"
+  biggestBooking?: { amount: number; nights: number; propertyName: string };
 
-  /** Busiest check-in date (e.g., "June 14") */
-  busiestDate: string;
-
-  /** Largest single booking (optional) */
-  biggestBooking?: {
-    amount: number;
-    nights: number;
-    propertyName: string;
-  };
-
-  // ─────────────────────────────────────────────────────────────
-  // TIME SERIES
-  // ─────────────────────────────────────────────────────────────
-
-  /** Monthly performance data (12 entries) */
-  monthlyData: Array<{
-    month: string;      // "Jan", "Feb", etc.
-    occupancy: number;  // Percentage
-    revenue: number;    // Dollars
-  }>;
-
-  // ─────────────────────────────────────────────────────────────
-  // GUEST DEMOGRAPHICS (Aggregated)
-  // ─────────────────────────────────────────────────────────────
-
-  /** Where guests came from (for map visualization) */
-  guestOrigins: Array<{
-    city: string;
-    country: string;
-    count: number;
-    coordinates: [number, number];  // [longitude, latitude]
-  }>;
-
-  // ─────────────────────────────────────────────────────────────
-  // FEATURED CONTENT
-  // ─────────────────────────────────────────────────────────────
-
-  /** Spotlight review to feature (optional) */
-  spotlightReview?: {
-    text: string;
-    rating: number;
-    guestHash?: string;      // Link to guest record (optional)
-    propertyName?: string;
-  };
+  monthlyData: Array<{ month: string; occupancy: number; revenue: number }>;
+  guestOrigins: Array<{ city: string; country: string; count: number; coordinates: [number, number] }>;
+  spotlightReview?: { text: string; rating: number; guestHash?: string; propertyName?: string };
+  localPoints?: Array<{ coordinates: [number, number]; type: 'coffee' | 'business' | 'restaurant' | 'attraction'; name: string }>;
 }
 ```
-
----
 
 ## Guest Record
 
-Individual guest data. **No PII** - identified only by email hash.
-
 ```typescript
-// Key: hash(guest_email) e.g., "j4w8v2"
 interface GuestRecord {
-  /** Guest's origin location (city-level only) */
-  origin: {
-    city: string;
-    country?: string;
-    coordinates: [number, number];  // [longitude, latitude]
-  };
-
-  /** Stay dates */
-  stayDates: {
-    checkIn: string;   // ISO date "2025-03-15"
-    checkOut: string;  // ISO date "2025-03-22"
-  };
-
-  /** Number of nights stayed */
+  origin: { city: string; country?: string; coordinates: [number, number] };
+  stayDates: { checkIn: string; checkOut: string };  // ISO dates
   nightsStayed: number;
-
-  /** Property name (optional) */
   propertyName?: string;
 
-  // ─────────────────────────────────────────────────────────────
-  // IMPACT METRICS (all optional)
-  // ─────────────────────────────────────────────────────────────
-
-  /** Estimated local spend in dollars */
   localSpend?: number;
-
-  /** Savings vs hotel alternative */
   savedVsHotel?: number;
-
-  /** Fun stat: coffees consumed */
   coffeesPoured?: number;
 
-  // ─────────────────────────────────────────────────────────────
-  // THEIR REVIEW (optional)
-  // ─────────────────────────────────────────────────────────────
-
-  theirReview?: {
-    text: string;
-    rating: number;      // 1-5
-    date?: string;       // ISO date
-  };
+  theirReview?: { text: string; rating: number; date?: string };
 }
 ```
-
----
 
 ## Staff Record
 
-Individual staff member data. **No PII** - identified only by email hash.
-
 ```typescript
-// Key: hash(staff_email) e.g., "x9k2m1"
 interface StaffRecord {
-  /** Job title/role */
   role: string;
 
-  // ─────────────────────────────────────────────────────────────
-  // PERFORMANCE METRICS (all optional)
-  // ─────────────────────────────────────────────────────────────
-
-  /** Hours spent cleaning */
   cleaningHours?: number;
-
-  /** Number of turnovers completed */
   turnoversCompleted?: number;
-
-  /** 5-star reviews attributed to their work */
   fiveStarReviewsEarned?: number;
-
-  /** Maintenance tickets resolved */
   maintenanceResolved?: number;
 
-  // ─────────────────────────────────────────────────────────────
-  // FUN STATS (all optional)
-  // ─────────────────────────────────────────────────────────────
-
-  /** Sheets changed */
   sheetsChanged?: number;
-
-  /** Towels folded */
   towelsFolded?: number;
-
-  /** Batteries replaced */
   batteriesReplaced?: number;
 
-  // ─────────────────────────────────────────────────────────────
-  // GUEST COMPLIMENTS (optional)
-  // ─────────────────────────────────────────────────────────────
-
-  /** Positive feedback from guests (no guest names) */
-  guestCompliments?: Array<{
-    text: string;
-    date: string;  // ISO date
-  }>;
+  guestCompliments?: Array<{ text: string; date: string }>;
 }
 ```
-
----
 
 ## Platform Data (`platform.json`)
 
-Global HostAI statistics for the platform-wide view.
-
 ```typescript
 interface PlatformData {
-  /** Report year */
   year: number;
-
-  /** ISO timestamp when generated */
   generatedAt: string;
 
-  // ─────────────────────────────────────────────────────────────
-  // SCALE METRICS
-  // ─────────────────────────────────────────────────────────────
-
-  /** Total properties on platform */
   totalPropertiesManaged: number;
-
-  /** Total property managers */
   totalPropertyManagers: number;
-
-  /** Countries with active properties */
   countriesActive: number;
 
-  // ─────────────────────────────────────────────────────────────
-  // FINANCIAL
-  // ─────────────────────────────────────────────────────────────
-
-  /** Platform-wide revenue */
   platformGlobalRevenue: number;
-
-  /** Total booking value processed */
   totalBookingValue: number;
 
-  // ─────────────────────────────────────────────────────────────
-  // AI METRICS
-  // ─────────────────────────────────────────────────────────────
-
-  /** AI conversations handled */
   aiConversationsHandled: number;
-
-  /** Average response time in seconds (optional) */
   averageResponseTime?: number;
 
-  // ─────────────────────────────────────────────────────────────
-  // IMPACT
-  // ─────────────────────────────────────────────────────────────
-
-  /** Global economic impact */
   globalEconomicImpact: number;
-
-  /** Total guests served */
   totalGuestsServed: number;
 
-  // ─────────────────────────────────────────────────────────────
-  // GROWTH
-  // ─────────────────────────────────────────────────────────────
-
-  /** Year-over-year growth percentage (optional) */
   yoyGrowth?: number;
 
-  // ─────────────────────────────────────────────────────────────
-  // TESTIMONIALS (optional)
-  // ─────────────────────────────────────────────────────────────
-
-  /** Featured PM testimonials (anonymized) */
-  testimonials?: Array<{
-    text: string;
-    pmRegion?: string;  // e.g., "North America", "Europe"
-  }>;
+  testimonials?: Array<{ text: string; pmRegion?: string }>;
 }
 ```
 
----
-
 ## Hash Functions
 
-Use these to generate consistent, one-way identifiers.
-
-### Guest Hash
-
 ```typescript
+// Guest lookup key
 const hashGuestEmail = (email: string): string => {
-  const normalized = email.toLowerCase().trim();
-  return simpleHash(`guest:${normalized}`, 6);
+  return simpleHash(`guest:${email.toLowerCase().trim()}`, 6);
 };
 
-// Example:
-// hashGuestEmail("jordan.rivera@email.com") → "j4w8v2"
-```
-
-### Staff Hash
-
-```typescript
+// Staff lookup key
 const hashStaffEmail = (email: string): string => {
-  const normalized = email.toLowerCase().trim();
-  return simpleHash(`staff:${normalized}`, 6);
+  return simpleHash(`staff:${email.toLowerCase().trim()}`, 6);
 };
 
-// Example:
-// hashStaffEmail("elena.martinez@company.com") → "x9k2m1"
-```
-
-### Property Manager Hash
-
-```typescript
+// PM identifier (from UUID)
 const hashHostId = (uuid: string): string => {
   const hex = uuid.replace(/-/g, '').slice(0, 8);
-  const num = parseInt(hex, 16);
-  return num.toString(36).padStart(6, '0').slice(0, 6);
-};
-
-// Example:
-// hashHostId("550e8400-e29b-41d4-a716-446655440000") → "nllvk0"
-```
-
-### Simple Hash Implementation
-
-```typescript
-const simpleHash = (input: string, length: number = 6): string => {
-  let hash = 0;
-  for (let i = 0; i < input.length; i++) {
-    const char = input.charCodeAt(i);
-    hash = ((hash << 5) - hash) + char;
-    hash = hash & hash; // Convert to 32-bit integer
-  }
-  const positive = Math.abs(hash);
-  return positive.toString(36).padStart(length, '0').slice(0, length);
+  return parseInt(hex, 16).toString(36).padStart(6, '0').slice(0, 6);
 };
 ```
 
-See `src/lib/hash.ts` for the full implementation.
+Full implementation: `src/lib/hash.ts`
 
----
-
-## URL Structure
-
-### Shareable Links
+## URLs
 
 ```
 /s/{pmHash}/owner              → Owner view
-/s/{pmHash}/guest?g={guestHash} → Guest view (specific guest)
-/s/{pmHash}/staff?s={staffHash} → Staff view (specific staff)
+/s/{pmHash}/guest?g={guestHash} → Guest view
+/s/{pmHash}/staff?s={staffHash} → Staff view
 /s/hostai                       → Platform view
 ```
-
-### URL Generation
-
-```typescript
-// Owner
-const ownerUrl = `/s/${pmHash}/owner`;
-
-// Guest (with specific guest data)
-const guestUrl = `/s/${pmHash}/guest?g=${hashGuestEmail(email)}`;
-
-// Staff (with specific staff data)
-const staffUrl = `/s/${pmHash}/staff?s=${hashStaffEmail(email)}`;
-```
-
----
-
-## Sample Data
-
-Reference implementations in the repository:
-
-| File | Description |
-|------|-------------|
-| `examples/consolidated/a7f3c2.json` | Complete PM file with owner, staff, and guests |
-| `examples/consolidated/platform.json` | Platform-wide statistics |
-
----
-
-## Validation Checklist
-
-Before deploying data, verify:
-
-- [ ] `pmId` matches the filename (e.g., `a7f3c2.json` has `pmId: "a7f3c2"`)
-- [ ] `year` is correct (e.g., `2025`)
-- [ ] `generatedAt` is a valid ISO timestamp
-- [ ] `monthlyData` has exactly 12 entries (Jan-Dec)
-- [ ] `guestOrigins` coordinates are `[longitude, latitude]` (not lat/long)
-- [ ] All guest/staff keys are valid 6-character hashes
-- [ ] No PII in any field (no names, emails, addresses)
-- [ ] All required fields are present (see interfaces above)

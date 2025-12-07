@@ -57,6 +57,17 @@ body {
   }
 }
 
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+    opacity: 0.4;
+  }
+  50% {
+    transform: translateY(-8px);
+    opacity: 0.8;
+  }
+}
+
 .animate-ken-burns {
   animation: ken-burns 20s ease-out forwards;
 }
@@ -71,6 +82,10 @@ body {
 
 .animate-progress-linear {
   animation: progress-linear 10s linear forwards;
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
 }
 
 /* Delay classes for staggered animations */

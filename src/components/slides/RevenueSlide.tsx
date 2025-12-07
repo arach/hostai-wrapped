@@ -14,64 +14,83 @@ export const StatsSlide: React.FC<StatsSlideProps> = ({ data, audience }) => {
 
   const renderOwnerView = () => (
     <>
-      <div className="animate-slide-up">
-        <div className={`inline-block bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-4 py-1.5 rounded-full ${typography.label} mb-6 backdrop-blur-sm`}>
-          Annual Performance
-        </div>
-        <h2 className={`${typography.hero} mb-4 bg-clip-text text-transparent bg-gradient-to-b from-white to-white/60`}>
-          ${(data.totalRevenue / 1000).toFixed(0)}k
+      {/* Dark background with subtle grid */}
+      <div className="absolute inset-0 z-0 pointer-events-none bg-black" />
+      <div
+        className="absolute inset-0 z-0 pointer-events-none"
+        style={{
+          backgroundImage: `linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px)`,
+          backgroundSize: '24px 24px'
+        }}
+      />
+
+      {/* Header */}
+      <div className="relative z-10 mb-6 animate-fade-in">
+        <h2 className={`${typography.hero} text-white mb-2`}>
+          Your year<br/>in numbers.
         </h2>
-        <p className={`${typography.body} text-white/60 mb-8`}>
-          Total Revenue Generated
-        </p>
+        <p className={`${typography.body} text-white/70`}>It pays to be direct 💸</p>
       </div>
 
-      <div className="animate-slide-up grid grid-cols-2 gap-4" style={{ animationDelay: '0.2s' }}>
-           {/* Direct Bookings YoY */}
-           <div className="bg-white/5 p-4 rounded-2xl border border-white/10 backdrop-blur-sm">
-              <div className="flex items-center gap-2 mb-1">
-                 <div className={typography.stat}>+{data.directBookingIncrease}%</div>
-                 <div className="text-emerald-400 bg-emerald-500/20 rounded-full p-1">
-                    <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 10l7-7m0 0l7 7m-7-7v18" />
-                    </svg>
-                 </div>
-              </div>
-              <div className={typography.sublabel}>Direct Bookings YoY</div>
-           </div>
+      {/* Big Revenue Number */}
+      <div className="relative z-10 animate-slide-up">
+        <div className={`text-5xl font-bold tracking-tight text-white`}>
+          ${(data.totalRevenue / 1000).toFixed(0)}k
+        </div>
+        <div className={typography.sublabel}>Total Revenue</div>
+        <div className="mt-2 text-emerald-400 text-sm font-medium">
+          You saved ${(data.otaSavings / 1000).toFixed(0)}k in OTA fees
+        </div>
+      </div>
 
-           {/* Occupancy Rate */}
-           <div className="bg-white/5 p-4 rounded-2xl border border-white/10 backdrop-blur-sm">
-              <div className={`${typography.stat} mb-1`}>{data.occupancyRate}%</div>
-              <div className={typography.sublabel}>Occupancy Rate</div>
-           </div>
+      {/* Spacer */}
+      <div className="flex-1" />
 
-           {/* Economic Impact */}
-           <div className="bg-white/5 p-4 rounded-2xl border border-white/10 backdrop-blur-sm col-span-2 flex items-center justify-between">
-              <div>
-                <div className={`${typography.stat} mb-1`}>${(data.economicImpact / 1000000).toFixed(1)}M</div>
-                <div className={typography.sublabel}>Local Economic Contribution</div>
-              </div>
-              <div className="text-3xl opacity-20">🏙️</div>
-           </div>
+      {/* Bottom Content Area - Stats Grid */}
+      <div className="animate-slide-up relative z-10" style={{ animationDelay: '0.2s' }}>
+        <h3 className={`${typography.sublabel} mb-3 uppercase tracking-wider`}>Key Metrics</h3>
+        {/* Grid container */}
+        <div className="grid grid-cols-2 relative">
+          {/* Extending lines (light gray) */}
+          <div className="absolute left-[-2rem] right-[-2rem] top-0 h-px bg-white/5" />
+          <div className="absolute left-[-2rem] right-[-2rem] bottom-0 h-px bg-white/5" />
+          <div className="absolute left-1/2 top-[-1rem] bottom-[-1rem] w-px bg-white/5" />
 
-           {/* Nights Booked */}
-           <div className="bg-white/5 p-4 rounded-2xl border border-white/10 backdrop-blur-sm flex items-center gap-3">
-              <div className="text-xl">🌙</div>
-              <div>
-                <div className={typography.stat}>{data.totalNights.toLocaleString()}</div>
-                <div className={typography.sublabel}>Nights Booked</div>
+          {/* Row 1 */}
+          <div className="p-4 border-b border-r border-white/20">
+            <div className="flex items-center gap-2 mb-1">
+              <div className={typography.stat}>+{data.directBookingIncrease}%</div>
+              <div className="text-emerald-400">
+                <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 10l7-7m0 0l7 7m-7-7v18" />
+                </svg>
               </div>
-           </div>
+            </div>
+            <div className={typography.sublabel}>Direct Bookings YoY</div>
+          </div>
 
-           {/* Website Visits */}
-           <div className="bg-white/5 p-4 rounded-2xl border border-white/10 backdrop-blur-sm flex items-center gap-3">
-              <div className="text-xl">🌐</div>
-              <div>
-                <div className={typography.stat}>{(data.websiteVisits / 1000).toFixed(1)}k</div>
-                <div className={typography.sublabel}>Site Visits</div>
-              </div>
-           </div>
+          <div className="p-4 border-b border-white/20">
+            <div className={`${typography.stat} mb-1`}>{data.occupancyRate}%</div>
+            <div className={typography.sublabel}>Occupancy Rate</div>
+          </div>
+
+          {/* Row 2 - Biggest Booking */}
+          <div className="p-4 border-b border-white/20 col-span-2">
+            <div className={`${typography.stat} mb-1`}>${data.biggestBooking.amount.toLocaleString()}</div>
+            <div className={typography.sublabel}>Biggest booking · {data.biggestBooking.nights} nights 🐋</div>
+          </div>
+
+          {/* Row 3 */}
+          <div className="p-4 border-r border-white/20">
+            <div className={typography.stat}>{data.totalNights.toLocaleString()}</div>
+            <div className={typography.sublabel}>Nights Booked</div>
+          </div>
+
+          <div className="p-4">
+            <div className={typography.stat}>{(data.websiteVisits / 1000).toFixed(1)}k</div>
+            <div className={typography.sublabel}>Site Visits</div>
+          </div>
+        </div>
       </div>
     </>
   );
@@ -169,7 +188,7 @@ export const StatsSlide: React.FC<StatsSlideProps> = ({ data, audience }) => {
         <div className={`inline-block bg-white/20 text-white border border-white/30 px-4 py-1.5 rounded-full ${typography.label} mb-6 backdrop-blur-sm`}>
           Network Scale
         </div>
-        <h2 className={`${typography.hero} mb-4 bg-clip-text text-transparent bg-gradient-to-b from-white to-white/60`}>
+        <h2 className={`${typography.hero} mb-4 text-white pt-1`}>
           ${(data.platformGlobalRevenue / 1000000).toFixed(0)}M
         </h2>
         <p className={`${typography.body} text-white/60 mb-8`}>
@@ -205,13 +224,11 @@ export const StatsSlide: React.FC<StatsSlideProps> = ({ data, audience }) => {
   );
 
   return (
-    <div className="flex flex-col h-full justify-center px-8 pb-20 relative">
-      <div className="space-y-12">
-        {audience === 'OWNER' && renderOwnerView()}
-        {audience === 'GUEST' && renderGuestView()}
-        {audience === 'STAFF' && renderStaffView()}
-        {audience === 'HOSTAI' && renderHostAIView()}
-      </div>
+    <div className="flex flex-col h-full px-8 pt-24 pb-28 relative">
+      {audience === 'OWNER' && renderOwnerView()}
+      {audience === 'GUEST' && renderGuestView()}
+      {audience === 'STAFF' && renderStaffView()}
+      {audience === 'HOSTAI' && renderHostAIView()}
     </div>
   );
 };

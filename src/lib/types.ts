@@ -46,6 +46,13 @@ export interface SpotlightReview extends Review {
   propertyName?: string;
 }
 
+/** Local point of interest (coffee shop, restaurant, etc.) */
+export interface LocalPoint {
+  coordinates: Coordinates;
+  type: 'coffee' | 'business' | 'restaurant' | 'attraction';
+  name: string;
+}
+
 // -----------------------------------------------------------------------------
 // GUEST DATA (No PII - identified by hash only)
 // -----------------------------------------------------------------------------
@@ -143,6 +150,9 @@ export interface OwnerData {
 
   // Featured review
   spotlightReview?: SpotlightReview;
+
+  // Local neighborhood highlights (coffee shops, restaurants, etc.)
+  localPoints?: LocalPoint[];
 }
 
 // -----------------------------------------------------------------------------
@@ -261,6 +271,9 @@ export interface HostData {
   fiveStarReviewsEarned: number;
   maintenanceResolved: number;
 
+  // AI Stats (for this host)
+  guestConversationsHandled: number;
+
   // Platform Stats (Synthetic)
   platformGlobalRevenue: number;
   aiConversationsHandled: number;
@@ -284,11 +297,15 @@ export interface HostData {
     rating: number;
     property: string;
   };
+
+  // Local neighborhood highlights (coffee shops, restaurants, etc.)
+  localPoints?: LocalPoint[];
 }
 
 export enum SlideType {
   INTRO = 'INTRO',
   MAP = 'MAP',
+  DISCOVERY = 'DISCOVERY',
   STATS = 'STATS',
   SEASONS = 'SEASONS',
   REVIEW = 'REVIEW',

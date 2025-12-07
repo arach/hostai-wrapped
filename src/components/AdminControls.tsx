@@ -79,7 +79,7 @@ export const AdminControls: React.FC<AdminControlsProps> = ({
   };
 
   return (
-    <div className="w-full max-w-[550px] bg-zinc-900 border border-zinc-800 rounded-xl p-4 shadow-2xl flex flex-col gap-4">
+    <div className="w-full max-w-[550px] bg-zinc-900 border border-zinc-800 rounded-xl p-4 shadow-2xl flex flex-col gap-4 h-[340px]">
 
       {/* Top Row: Audience Selector & Playback */}
       <div className="flex items-center justify-between border-b border-zinc-800 pb-4">

@@ -13,7 +13,7 @@ import { SlideType, Audience } from '@/lib/types';
 const gradients: Record<SlideType, string> = {
   [SlideType.INTRO]: 'bg-gradient-to-br from-[#2e1065] via-[#4c1d95] to-[#be185d]',
   [SlideType.MAP]: 'bg-gradient-to-b from-[#020617] via-[#0f172a] to-[#1e1b4b]',
-  [SlideType.STATS]: 'bg-gradient-to-br from-[#022c22] via-[#064e3b] to-[#065f46]',
+  [SlideType.STATS]: 'bg-black',
   [SlideType.SEASONS]: 'bg-gradient-to-br from-[#451a03] via-[#7c2d12] to-[#c2410c]',
   [SlideType.REVIEW]: 'bg-gradient-to-br from-[#4a044e] via-[#701a75] to-[#be185d]',
   [SlideType.OUTRO]: 'bg-gradient-to-br from-[#172554] via-[#1e3a8a] to-[#2563eb]',
@@ -81,7 +81,7 @@ export default function HostAIView() {
       case SlideType.MAP: return <GuestMapSlide data={hostData} viewMode={mapViewMode} isPlaying={isMapPlaying} audience={audience} />;
       case SlideType.STATS: return <StatsSlide data={hostData} audience={audience} />;
       case SlideType.REVIEW: return <ReviewSlide data={hostData} />;
-      case SlideType.OUTRO: return <OutroSlide audience={audience} />;
+      case SlideType.OUTRO: return <OutroSlide audience={audience} data={hostData} />;
       default: return null;
     }
   };
@@ -102,6 +102,8 @@ export default function HostAIView() {
           onPrev={prevSlide}
           backgroundImage={getBackgroundImage()}
           audience={audience}
+          isPaused={isPaused}
+          onTogglePause={() => setIsPaused(!isPaused)}
         >
           {renderContent()}
         </StoryLayout>

@@ -27,6 +27,7 @@ export const mockHostData: HostData = {
   maintenanceResolved: 298,
   localBusinessesSupported: 24,
   communityCoffeeCount: 2890,
+  guestConversationsHandled: 4280, // AI-handled guest chats for this host
 
   // Platform Stats
   platformGlobalRevenue: 520000000,
@@ -106,23 +107,41 @@ export const mockHostData: HostData = {
     property: "Urban Loft with Skyline Views"
   },
   monthlyOccupancy: [
-    { month: 'J', occupancy: 65, revenue: 45000 },
-    { month: 'F', occupancy: 70, revenue: 52000 },
-    { month: 'M', occupancy: 85, revenue: 78000 },
-    { month: 'A', occupancy: 92, revenue: 89000 },
-    { month: 'M', occupancy: 98, revenue: 95000 },
-    { month: 'J', occupancy: 95, revenue: 92000 },
-    { month: 'J', occupancy: 88, revenue: 85000 },
-    { month: 'A', occupancy: 80, revenue: 75000 },
-    { month: 'S', occupancy: 90, revenue: 88000 },
-    { month: 'O', occupancy: 94, revenue: 91000 },
-    { month: 'N', occupancy: 82, revenue: 70000 },
-    { month: 'D', occupancy: 75, revenue: 60000 },
+    { month: 'Jan', occupancy: 65, revenue: 45000 },
+    { month: 'Feb', occupancy: 70, revenue: 52000 },
+    { month: 'Mar', occupancy: 85, revenue: 78000 },
+    { month: 'Apr', occupancy: 92, revenue: 89000 },
+    { month: 'May', occupancy: 98, revenue: 95000 },
+    { month: 'Jun', occupancy: 95, revenue: 92000 },
+    { month: 'Jul', occupancy: 88, revenue: 85000 },
+    { month: 'Aug', occupancy: 80, revenue: 75000 },
+    { month: 'Sep', occupancy: 90, revenue: 88000 },
+    { month: 'Oct', occupancy: 94, revenue: 91000 },
+    { month: 'Nov', occupancy: 82, revenue: 70000 },
+    { month: 'Dec', occupancy: 75, revenue: 60000 },
   ],
   spotlightReview: {
     guest: "Michael Torres",
     text: "Incredible experience from start to finish. The space was immaculate and the host communication was top-notch.",
     rating: 5,
     property: "Horizon Premier Suite"
-  }
+  },
+
+  // Local neighborhood highlights (DC area)
+  localPoints: [
+    { coordinates: [-77.0428, 38.9096], type: 'coffee', name: 'Compass Coffee' },
+    { coordinates: [-77.0312, 38.9048], type: 'coffee', name: 'Peregrine Espresso' },
+    { coordinates: [-77.0455, 38.9134], type: 'coffee', name: 'Filter Coffeehouse' },
+    { coordinates: [-77.0267, 38.9002], type: 'coffee', name: 'Swings Coffee' },
+    { coordinates: [-77.0398, 38.9167], type: 'coffee', name: 'The Coffee Bar' },
+    { coordinates: [-77.0489, 38.9045], type: 'coffee', name: 'Emissary' },
+    { coordinates: [-77.0341, 38.9078], type: 'business', name: 'Eastern Market' },
+    { coordinates: [-77.0423, 38.9112], type: 'restaurant', name: 'Le Diplomate' },
+    { coordinates: [-77.0356, 38.9021], type: 'restaurant', name: "Rose's Luxury" },
+    { coordinates: [-77.0478, 38.9089], type: 'restaurant', name: 'Founding Farmers' },
+    { coordinates: [-77.0289, 38.9056], type: 'restaurant', name: "Ted's Bulletin" },
+    { coordinates: [-77.0512, 38.9023], type: 'restaurant', name: 'Commissary DC' },
+    { coordinates: [-77.0334, 38.9134], type: 'business', name: 'Union Market' },
+    { coordinates: [-77.0456, 38.8987], type: 'restaurant', name: 'The Smith' },
+  ]
 };

@@ -59,7 +59,23 @@
       "rating": 5,
       "guestHash": "j4w8v2",
       "propertyName": "Horizon Premier Suite"
-    }
+    },
+    "localPoints": [
+      { "coordinates": [-77.0428, 38.9096], "type": "coffee", "name": "Compass Coffee" },
+      { "coordinates": [-77.0312, 38.9048], "type": "coffee", "name": "Peregrine Espresso" },
+      { "coordinates": [-77.0455, 38.9134], "type": "coffee", "name": "Filter Coffeehouse" },
+      { "coordinates": [-77.0267, 38.9002], "type": "coffee", "name": "Swings Coffee" },
+      { "coordinates": [-77.0398, 38.9167], "type": "coffee", "name": "The Coffee Bar" },
+      { "coordinates": [-77.0489, 38.9045], "type": "coffee", "name": "Emissary" },
+      { "coordinates": [-77.0341, 38.9078], "type": "business", "name": "Eastern Market" },
+      { "coordinates": [-77.0423, 38.9112], "type": "restaurant", "name": "Le Diplomate" },
+      { "coordinates": [-77.0356, 38.9021], "type": "restaurant", "name": "Rose's Luxury" },
+      { "coordinates": [-77.0478, 38.9089], "type": "restaurant", "name": "Founding Farmers" },
+      { "coordinates": [-77.0289, 38.9056], "type": "restaurant", "name": "Ted's Bulletin" },
+      { "coordinates": [-77.0512, 38.9023], "type": "restaurant", "name": "Commissary DC" },
+      { "coordinates": [-77.0334, 38.9134], "type": "business", "name": "Union Market" },
+      { "coordinates": [-77.0456, 38.8987], "type": "restaurant", "name": "The Smith" }
+    ]
   },
 
   "staff": {

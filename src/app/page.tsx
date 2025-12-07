@@ -6,6 +6,7 @@ import { StoryLayout } from '@/components/StoryLayout';
 import { IntroSlide } from '@/components/slides/IntroSlide';
 import { StatsSlide } from '@/components/slides/RevenueSlide';
 import { GuestMapSlide } from '@/components/slides/GuestMapSlide';
+import { DiscoverySlide } from '@/components/slides/DiscoverySlide';
 import { SeasonSlide } from '@/components/slides/SeasonSlide';
 import { ReviewSlide } from '@/components/slides/ReviewSlide';
 import { OutroSlide } from '@/components/slides/OutroSlide';
@@ -17,10 +18,22 @@ import { SlideType, Audience } from '@/lib/types';
 const gradients: Record<SlideType, string> = {
   [SlideType.INTRO]: 'bg-gradient-to-br from-[#2e1065] via-[#4c1d95] to-[#be185d]', // Deep Purple -> Magenta
   [SlideType.MAP]: 'bg-gradient-to-b from-[#020617] via-[#0f172a] to-[#1e1b4b]', // Deep Space Blue
-  [SlideType.STATS]: 'bg-gradient-to-br from-[#022c22] via-[#064e3b] to-[#065f46]', // Rich Emerald
+  [SlideType.DISCOVERY]: 'bg-gradient-to-br from-[#1e3a5f] via-[#2d5a87] to-[#0d9488]', // Ocean Teal
+  [SlideType.STATS]: 'bg-black',
   [SlideType.SEASONS]: 'bg-gradient-to-br from-[#451a03] via-[#7c2d12] to-[#c2410c]', // Burnt Orange/Amber
   [SlideType.REVIEW]: 'bg-gradient-to-br from-[#4a044e] via-[#701a75] to-[#be185d]', // Deep Velvet
   [SlideType.OUTRO]: 'bg-gradient-to-br from-[#172554] via-[#1e3a8a] to-[#2563eb]', // Royal Blue
+};
+
+// Accent colors for extending lines (lighter versions of gradient colors)
+const accentColors: Record<SlideType, string> = {
+  [SlideType.INTRO]: 'rgba(147, 51, 234, 0.4)', // Purple
+  [SlideType.MAP]: 'rgba(30, 58, 138, 0.4)', // Deep Blue
+  [SlideType.DISCOVERY]: 'rgba(13, 148, 136, 0.4)', // Teal
+  [SlideType.STATS]: 'rgba(255, 255, 255, 0.15)', // White (neutral for black bg)
+  [SlideType.SEASONS]: 'rgba(194, 65, 12, 0.4)', // Orange
+  [SlideType.REVIEW]: 'rgba(190, 24, 93, 0.4)', // Magenta/Pink
+  [SlideType.OUTRO]: 'rgba(37, 99, 235, 0.4)', // Royal Blue
 };
 
 const AUTO_ADVANCE_DURATION = 8000;
@@ -78,7 +91,7 @@ function HomeContent() {
             return [SlideType.INTRO, SlideType.STATS, SlideType.MAP, SlideType.REVIEW, SlideType.OUTRO];
         case 'OWNER':
         default:
-            return [SlideType.INTRO, SlideType.MAP, SlideType.STATS, SlideType.SEASONS, SlideType.REVIEW, SlideType.OUTRO];
+            return [SlideType.INTRO, SlideType.MAP, SlideType.DISCOVERY, SlideType.STATS, SlideType.SEASONS, SlideType.REVIEW, SlideType.OUTRO];
     }
   };
 
@@ -160,10 +173,11 @@ function HomeContent() {
     switch (currentSlide) {
       case SlideType.INTRO: return <IntroSlide audience={audience} data={mockHostData} />;
       case SlideType.MAP: return <GuestMapSlide data={mockHostData} viewMode={mapViewMode} isPlaying={isMapPlaying} audience={audience} />;
+      case SlideType.DISCOVERY: return <DiscoverySlide data={mockHostData} />;
       case SlideType.STATS: return <StatsSlide data={mockHostData} audience={audience} />;
       case SlideType.SEASONS: return <SeasonSlide key={`season-${currentSlideIndex}`} data={mockHostData} />;
       case SlideType.REVIEW: return <ReviewSlide data={mockHostData} />;
-      case SlideType.OUTRO: return <OutroSlide audience={audience} />;
+      case SlideType.OUTRO: return <OutroSlide audience={audience} data={mockHostData} />;
       default: return null;
     }
   };
@@ -188,6 +202,9 @@ function HomeContent() {
                 onPrev={prevSlide}
                 backgroundImage={getBackgroundImage()}
                 audience={audience}
+                accentColor={accentColors[currentSlide]}
+                isPaused={isPaused}
+                onTogglePause={() => setIsPaused(!isPaused)}
             >
                 {renderContent()}
             </StoryLayout>

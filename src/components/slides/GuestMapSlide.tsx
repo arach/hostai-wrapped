@@ -3,7 +3,7 @@
 import React, { useEffect, useRef, useState, useMemo } from 'react';
 import dynamic from 'next/dynamic';
 import * as d3 from 'd3';
-import { HostData, Audience } from '@/lib/types';
+import { HostData, Audience, LocalPoint } from '@/lib/types';
 import * as topojson from 'topojson-client';
 import { typography } from '@/lib/design-system';
 
@@ -72,28 +72,8 @@ export const GuestMapSlide: React.FC<GuestMapSlideProps> = ({
   // Animation State Refs
   const rotationRef = useRef<[number, number, number]>([-data.homeCoordinates[0], -20, 0]);
 
-  // DC-specific local points of interest (real locations around Dupont Circle/Capitol Hill)
-  const localPoints = useMemo(() => {
-    // These are actual DC coffee shops and local businesses near the property area
-    return [
-      // Coffee Shops
-      { coordinates: [-77.0428, 38.9096], type: 'coffee', name: 'Compass Coffee' },
-      { coordinates: [-77.0312, 38.9048], type: 'coffee', name: 'Peregrine Espresso' },
-      { coordinates: [-77.0455, 38.9134], type: 'coffee', name: 'Filter Coffeehouse' },
-      { coordinates: [-77.0267, 38.9002], type: 'coffee', name: 'Swings Coffee' },
-      { coordinates: [-77.0398, 38.9167], type: 'coffee', name: 'The Coffee Bar' },
-      { coordinates: [-77.0489, 38.9045], type: 'coffee', name: 'Emissary' },
-      // Local Businesses / Restaurants
-      { coordinates: [-77.0341, 38.9078], type: 'business', name: 'Eastern Market' },
-      { coordinates: [-77.0423, 38.9112], type: 'business', name: 'Le Diplomate' },
-      { coordinates: [-77.0356, 38.9021], type: 'business', name: 'Rose\'s Luxury' },
-      { coordinates: [-77.0478, 38.9089], type: 'business', name: 'Founding Farmers' },
-      { coordinates: [-77.0289, 38.9056], type: 'business', name: 'Ted\'s Bulletin' },
-      { coordinates: [-77.0512, 38.9023], type: 'business', name: 'Commissary DC' },
-      { coordinates: [-77.0334, 38.9134], type: 'business', name: 'Union Market' },
-      { coordinates: [-77.0456, 38.8987], type: 'business', name: 'The Smith' },
-    ];
-  }, []);
+  // Local points of interest from the host's data
+  const localPoints: LocalPoint[] = useMemo(() => data.localPoints || [], [data.localPoints]);
 
   // 1. Fetch Topology Data Once (Only needed for Globe/Map)
   useEffect(() => {
@@ -468,39 +448,37 @@ export const GuestMapSlide: React.FC<GuestMapSlideProps> = ({
   if (backgroundOnly && viewMode === 'LOCAL') {
     return (
       <div className={`absolute inset-0 ${className}`}>
-        <LocalMap center={data.homeCoordinates} className="w-full h-full" />
+        <LocalMap center={data.homeCoordinates} localPoints={localPoints} className="w-full h-full" />
       </div>
     );
   }
 
   return (
-    <div className={`flex flex-col h-full ${hideHeader ? '' : 'pt-16 px-6'} relative overflow-hidden ${className}`}>
+    <div className={`flex flex-col h-full ${hideHeader ? '' : 'pt-24 px-8 pb-28'} relative overflow-hidden ${className}`}>
 
       {/* Base dark background for all modes */}
       <div className="absolute inset-0 z-0 bg-gradient-to-b from-slate-900 via-slate-950 to-black" />
 
-      {/* LOCAL MODE BACKGROUND MAP LAYER - DC Neighborhood using Leaflet */}
+      {/* LOCAL MODE BACKGROUND MAP LAYER - Neighborhood using Leaflet */}
       {viewMode === 'LOCAL' && (
         <div className="absolute inset-0 z-0">
-          <LocalMap center={data.homeCoordinates} className="w-full h-full" />
+          <LocalMap center={data.homeCoordinates} localPoints={localPoints} className="w-full h-full" />
         </div>
       )}
 
-      {/* Header */}
+      {/* Header - Fixed position at top */}
       {!hideHeader && (
-        <div className="flex flex-col items-center mb-4 z-20 animate-fade-in relative pointer-events-none">
-          <div className={`bg-white/10 px-4 py-1.5 rounded-full border border-white/20 mb-6 backdrop-blur-md shadow-lg ${typography.label}`}>
-            <span className="text-white">
-              {audience === 'HOSTAI' ? 'Global Network' : (viewMode === 'LOCAL' ? 'Neighborhood' : 'Global Reach')}
-            </span>
-          </div>
-          <h2 className={`${typography.hero} text-center drop-shadow-md whitespace-pre-line`}>
-            {viewMode === 'LOCAL' ? 'Local Impact \n & Vibe.' : (audience === 'HOSTAI' ? 'Connecting \n the world.' : 'The world came \n to stay.')}
+        <div className="z-20 animate-fade-in relative pointer-events-none mb-4">
+          <h2 className={`${typography.hero} drop-shadow-md whitespace-pre-line mb-3`}>
+            {viewMode === 'LOCAL' ? 'Local\nImpact.' : (audience === 'HOSTAI' ? 'Connecting\nthe world.' : 'The world\ncame to stay.')}
           </h2>
+          <p className={`${typography.body} text-white/70 drop-shadow-md`}>
+            {viewMode === 'LOCAL' ? 'Your neighborhood, their adventure.' : (audience === 'HOSTAI' ? 'Hospitality without borders.' : 'From near and far, they found you.')}
+          </p>
         </div>
       )}
 
-      {/* Map Container */}
+      {/* Map Container - full flex space */}
       <div ref={containerRef} className="flex-1 w-full relative flex items-center justify-center z-10">
         {loading && viewMode !== 'LOCAL' && (
           <div className={`absolute ${typography.mono} text-white/50 animate-pulse uppercase tracking-widest`}>
@@ -527,6 +505,7 @@ export const GuestMapSlide: React.FC<GuestMapSlideProps> = ({
             </div>
           </div>
         )}
+
       </div>
 
       {/* Month Ticker (Hidden in LOCAL) */}

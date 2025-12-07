@@ -3,34 +3,16 @@
 import { useEffect, useRef } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
+import { LocalPoint } from '@/lib/types';
 
 interface LocalMapProps {
   center: [number, number]; // [lon, lat]
+  localPoints?: LocalPoint[];
   className?: string;
   interactive?: boolean;
 }
 
-// DC-specific local points of interest
-const localPoints = [
-  // Coffee Shops
-  { coordinates: [-77.0428, 38.9096] as [number, number], type: 'coffee', name: 'Compass Coffee' },
-  { coordinates: [-77.0312, 38.9048] as [number, number], type: 'coffee', name: 'Peregrine Espresso' },
-  { coordinates: [-77.0455, 38.9134] as [number, number], type: 'coffee', name: 'Filter Coffeehouse' },
-  { coordinates: [-77.0267, 38.9002] as [number, number], type: 'coffee', name: 'Swings Coffee' },
-  { coordinates: [-77.0398, 38.9167] as [number, number], type: 'coffee', name: 'The Coffee Bar' },
-  { coordinates: [-77.0489, 38.9045] as [number, number], type: 'coffee', name: 'Emissary' },
-  // Local Businesses / Restaurants
-  { coordinates: [-77.0341, 38.9078] as [number, number], type: 'business', name: 'Eastern Market' },
-  { coordinates: [-77.0423, 38.9112] as [number, number], type: 'business', name: 'Le Diplomate' },
-  { coordinates: [-77.0356, 38.9021] as [number, number], type: 'business', name: "Rose's Luxury" },
-  { coordinates: [-77.0478, 38.9089] as [number, number], type: 'business', name: 'Founding Farmers' },
-  { coordinates: [-77.0289, 38.9056] as [number, number], type: 'business', name: "Ted's Bulletin" },
-  { coordinates: [-77.0512, 38.9023] as [number, number], type: 'business', name: 'Commissary DC' },
-  { coordinates: [-77.0334, 38.9134] as [number, number], type: 'business', name: 'Union Market' },
-  { coordinates: [-77.0456, 38.8987] as [number, number], type: 'business', name: 'The Smith' },
-];
-
-export const LocalMap: React.FC<LocalMapProps> = ({ center, className = '', interactive = false }) => {
+export const LocalMap: React.FC<LocalMapProps> = ({ center, localPoints = [], className = '', interactive = false }) => {
   const mapRef = useRef<HTMLDivElement>(null);
   const leafletMapRef = useRef<L.Map | null>(null);
 
@@ -94,6 +76,7 @@ export const LocalMap: React.FC<LocalMapProps> = ({ center, className = '', inte
 
     // Add local points
     localPoints.forEach(point => {
+      // coffee = amber, everything else (business, restaurant, attraction) = cyan
       const icon = point.type === 'coffee' ? coffeeIcon : businessIcon;
       L.marker([point.coordinates[1], point.coordinates[0]], { icon }).addTo(map);
     });
@@ -119,7 +102,7 @@ export const LocalMap: React.FC<LocalMapProps> = ({ center, className = '', inte
       map.remove();
       leafletMapRef.current = null;
     };
-  }, [center, interactive]);
+  }, [center, localPoints, interactive]);
 
   return (
     <div className={`relative ${className}`}>

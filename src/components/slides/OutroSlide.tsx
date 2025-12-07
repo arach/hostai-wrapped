@@ -1,64 +1,90 @@
 'use client';
 
 import React from 'react';
-import { Audience } from '@/lib/types';
+import { Audience, HostData } from '@/lib/types';
 import { typography } from '@/lib/design-system';
 
 interface OutroSlideProps {
   audience: Audience;
+  data: HostData;
 }
 
-const getSummary = (audience: Audience): string => {
+const getContent = (audience: Audience, data: HostData): { title: string; subtitle: string; summary: string } => {
+  const formatMoney = (n: number) => {
+    if (n >= 1000000) return `$${(n / 1000000).toFixed(1)}M`;
+    if (n >= 1000) return `$${(n / 1000).toFixed(0)}k`;
+    return `$${n}`;
+  };
+
   switch (audience) {
     case 'GUEST':
-      return "You were one of <strong>842 guests</strong> who made this year unforgettable. We can't wait to welcome you back for another <strong>5-star stay</strong>.";
+      return {
+        title: "Until\nnext time.",
+        subtitle: "Thanks for being part of our story.",
+        summary: `You were one of <strong>${data.totalGuests.toLocaleString()} guests</strong> who made this year unforgettable. Together, we contributed <strong>${formatMoney(data.economicImpact)}</strong> to local businesses. We can't wait to welcome you back.`
+      };
     case 'STAFF':
-      return "Your hard work delivered <strong>5-star hospitality</strong> to over <strong>800 guests</strong>. Thank you for making every stay magical.";
+      return {
+        title: "Thank\nyou.",
+        subtitle: "You're the reason it all works.",
+        summary: `Your <strong>${data.cleaningHours.toLocaleString()} hours</strong> of hard work delivered <strong>${data.fiveStarReviewsEarned} 5-star reviews</strong> and served <strong>${data.totalGuests.toLocaleString()} guests</strong>. You cleaned <strong>${data.sheetsCleaned.toLocaleString()} sheets</strong> and made every stay feel like home.`
+      };
     case 'HOSTAI':
-      return "We powered over <strong>12,000 properties</strong> this year, processing <strong>$450M in value</strong>. Together, we are building the <strong>future of hospitality</strong>.";
+      return {
+        title: "Onward.",
+        subtitle: "The future of hospitality is here.",
+        summary: `We powered over <strong>${(data.totalPropertiesManaged / 1000).toFixed(0)}k properties</strong> this year, processing <strong>${formatMoney(data.platformGlobalRevenue)}</strong> in value and handling <strong>${(data.aiConversationsHandled / 1000000).toFixed(1)}M conversations</strong>.`
+      };
     default:
-      return "You welcomed <strong>842 guests</strong> during a record-breaking <strong>Spring season</strong>. Your commitment to <strong>5-star hospitality</strong> set a new standard.";
+      return {
+        title: "That's\na wrap.",
+        subtitle: "Here's to another great year ahead.",
+        summary: `You welcomed <strong>${data.totalGuests.toLocaleString()} guests</strong>, maintained <strong>${data.occupancyRate}% occupancy</strong>, increased direct bookings by <strong>${data.directBookingIncrease}%</strong>, earned <strong>${data.fiveStarReviewsEarned} 5-star reviews</strong>, and contributed an estimated <strong>${formatMoney(data.economicImpact)}</strong> to the local economy. Well done!`
+      };
   }
 };
 
-export const OutroSlide: React.FC<OutroSlideProps> = ({ audience }) => {
-  const summary = getSummary(audience);
+export const OutroSlide: React.FC<OutroSlideProps> = ({ audience, data }) => {
+  const content = getContent(audience, data);
 
   return (
-    <div className="flex flex-col h-full justify-center px-8 pb-20 text-center">
+    <div className="flex flex-col h-full px-8 pt-24 pb-28">
+      {/* Header */}
+      <div className="animate-fade-in mb-4">
+        <h2 className={`${typography.hero} text-white mb-2 whitespace-pre-line`}>
+          {content.title}
+        </h2>
+        <p className={`${typography.body} text-white/70`}>{content.subtitle}</p>
+      </div>
+
+      {/* Spacer */}
+      <div className="flex-1" />
+
+      {/* Bottom Content Area - Summary */}
       <div className="animate-slide-up">
-        <div className="mb-8 flex justify-center">
-           <div className="bg-white/10 p-4 rounded-full border border-white/20 backdrop-blur-md shadow-lg">
-              <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7" />
-              </svg>
-           </div>
-        </div>
-
-        <h2 className={`${typography.hero} mb-12 drop-shadow-md`}>2025 Wrapped</h2>
-
-        <div className="bg-black/20 backdrop-blur-md rounded-[2.5rem] p-8 border border-white/10 relative min-h-[200px] flex items-center justify-center shadow-2xl">
+        <h3 className={`${typography.sublabel} mb-3 uppercase tracking-wider`}>Year in Review</h3>
+        <div className="bg-white/5 backdrop-blur-md rounded-2xl p-5 border border-white/10">
             <div
-              className={`${typography.body} text-white/90
+              className={`${typography.body} text-white/80 leading-relaxed
               [&>strong]:text-white
-              [&>strong]:font-serif
-              [&>strong]:italic
               [&>strong]:font-bold
-              [&>strong]:mx-1`}
-              dangerouslySetInnerHTML={{ __html: summary }}
+              [&>strong]:italic
+              [&>strong]:text-lg
+              [&>strong]:font-serif
+              [&>strong]:drop-shadow-[0_0_8px_rgba(255,255,255,0.5)]`}
+              dangerouslySetInnerHTML={{ __html: content.summary }}
             />
         </div>
+      </div>
 
-        <div className="mt-12 space-y-4">
-            <button className={`w-full bg-white text-black ${typography.button} py-4 rounded-2xl hover:bg-gray-200 transition-colors shadow-[0_0_20px_rgba(255,255,255,0.2)]`}>
-                Share This Story
-            </button>
-            {audience === 'OWNER' && (
-              <button className={`w-full bg-transparent border border-white/20 text-white ${typography.button} py-4 rounded-2xl hover:bg-white/5 transition-colors`}>
-                  Full Analytics Report
-              </button>
-            )}
-        </div>
+      {/* CTA Button - Same style as Intro */}
+      <div className="animate-slide-up flex justify-center mt-6" style={{ animationDelay: '0.2s' }}>
+          <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/20 rounded-full pl-5 pr-2 py-2 cursor-pointer hover:bg-white/20 transition-colors shadow-lg">
+            <span className={`${typography.button} text-white`}>Share This Story</span>
+            <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center">
+              <svg className="w-4 h-4 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+            </div>
+          </div>
       </div>
     </div>
   );
