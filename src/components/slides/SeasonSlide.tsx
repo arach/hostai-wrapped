@@ -33,7 +33,7 @@ export const SeasonSlide: React.FC<SeasonSlideProps> = ({ data }) => {
         <h3 className="text-sm font-mono uppercase text-white/60 mb-4 pl-2">Occupancy Rhythm</h3>
         <div className="h-64 w-full bg-black/20 rounded-xl p-4 backdrop-blur-sm border border-white/10">
             {isReady && (
-              <ResponsiveContainer width="100%" height="100%" debounce={50}>
+              <ResponsiveContainer width="100%" height={200} minWidth={300}>
                 <BarChart data={data.monthlyOccupancy}>
                     <XAxis
                         dataKey="month"

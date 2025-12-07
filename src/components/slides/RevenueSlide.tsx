@@ -77,19 +77,19 @@ export const StatsSlide: React.FC<StatsSlideProps> = ({ data, audience }) => {
 
   const renderGuestView = () => (
     <>
-      {/* Background Map Visualization - Embedded directly for Guest Impact */}
+      {/* Background Map Visualization - Full opacity, visible map */}
       <div className="absolute inset-0 pointer-events-none" style={{ zIndex: 0 }}>
           <GuestMapSlide
             data={data}
             viewMode="LOCAL"
-            isPlaying={true}
+            isPlaying={false}
             audience={audience}
-            hideHeader={true}
-            className="w-full h-full opacity-40"
+            backgroundOnly={true}
+            className=""
           />
       </div>
-      {/* Gradient overlay - separate layer above map */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/70 to-black/40 pointer-events-none" style={{ zIndex: 1 }} />
+      {/* Subtle gradient overlay for text readability */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-black/40 pointer-events-none" style={{ zIndex: 1 }} />
 
       <div className="relative animate-slide-up" style={{ zIndex: 2 }}>
         <div className="flex items-center justify-between mb-6">
@@ -104,22 +104,9 @@ export const StatsSlide: React.FC<StatsSlideProps> = ({ data, audience }) => {
         <p className="text-xl font-sans font-light text-white/90 leading-relaxed mb-8 drop-shadow-lg">
            Guests like you contributed over <span className="text-blue-400 font-bold font-serif italic text-2xl">${(data.economicImpact / 1000000).toFixed(1)}M</span> to our local economy.
         </p>
-        <p className="text-lg font-sans font-light text-white/60 leading-relaxed mb-8 drop-shadow-md">
-           We&apos;re incredibly thankful for you choosing to support local.
+        <p className="text-lg font-sans font-light text-white/60 leading-relaxed drop-shadow-md">
+           Thank you for supporting local.
         </p>
-      </div>
-
-      <div className="relative animate-slide-up grid grid-cols-2 gap-4 font-sans" style={{ animationDelay: '0.2s', zIndex: 2 }}>
-          {/* Local Shops */}
-          <div className="bg-white/5 p-5 rounded-2xl border border-white/10 backdrop-blur-sm shadow-xl">
-              <div className="text-2xl font-bold mb-1 tracking-tight">{data.localBusinessesSupported}</div>
-              <div className="text-[10px] uppercase tracking-wider text-white/50">Small Businesses Supported</div>
-          </div>
-          {/* Coffees */}
-          <div className="bg-white/5 p-5 rounded-2xl border border-white/10 backdrop-blur-sm shadow-xl">
-              <div className="text-2xl font-bold mb-1 tracking-tight">{data.communityCoffeeCount.toLocaleString()}</div>
-              <div className="text-[10px] uppercase tracking-wider text-white/50">Local Coffees Poured</div>
-          </div>
       </div>
     </>
   );

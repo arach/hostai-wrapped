@@ -1,13 +1,21 @@
 'use client';
 
 import React, { useEffect, useRef, useState, useMemo } from 'react';
+import dynamic from 'next/dynamic';
 import * as d3 from 'd3';
 import { HostData, Audience } from '@/lib/types';
 import * as topojson from 'topojson-client';
 
+// Dynamic import for Leaflet map (client-side only)
+const LocalMap = dynamic(() => import('@/components/LocalMap').then(mod => mod.LocalMap), {
+  ssr: false,
+  loading: () => <div className="absolute inset-0 bg-slate-900" />,
+});
+
 // -----------------------------------------------------------------------------
 // SETTINGS
 // -----------------------------------------------------------------------------
+
 const MAP_CONSTANTS = {
   rotationSpeed: 0.2, // Degrees per tick
   maxArcs: 100, // Limit number of flight paths
@@ -31,6 +39,7 @@ interface GuestMapSlideProps {
   audience?: Audience;
   hideHeader?: boolean;
   className?: string;
+  backgroundOnly?: boolean; // Only show map image, no markers/SVG
 }
 
 interface ArcData {
@@ -46,7 +55,8 @@ export const GuestMapSlide: React.FC<GuestMapSlideProps> = ({
   isPlaying,
   audience,
   hideHeader = false,
-  className = ""
+  className = "",
+  backgroundOnly = false
 }) => {
   const svgRef = useRef<SVGSVGElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -453,24 +463,25 @@ export const GuestMapSlide: React.FC<GuestMapSlideProps> = ({
 
   }, [worldData, data, viewMode, audience, localPoints]);
 
+  // If backgroundOnly mode, just return the Leaflet map without any SVG overlay
+  if (backgroundOnly && viewMode === 'LOCAL') {
+    return (
+      <div className={`absolute inset-0 ${className}`}>
+        <LocalMap center={data.homeCoordinates} className="w-full h-full" />
+      </div>
+    );
+  }
+
   return (
     <div className={`flex flex-col h-full ${hideHeader ? '' : 'pt-16 px-6'} relative overflow-hidden ${className}`}>
 
-      {/* LOCAL MODE BACKGROUND MAP LAYER - DC Neighborhood */}
+      {/* Base dark background for all modes */}
+      <div className="absolute inset-0 z-0 bg-gradient-to-b from-slate-900 via-slate-950 to-black" />
+
+      {/* LOCAL MODE BACKGROUND MAP LAYER - DC Neighborhood using Leaflet */}
       {viewMode === 'LOCAL' && (
         <div className="absolute inset-0 z-0">
-          {/* Dark-themed map tile from CartoDB/Stamen centered on DC */}
-          <div
-            className="absolute inset-0 bg-cover bg-center opacity-60"
-            style={{
-              backgroundImage: `url("https://api.mapbox.com/styles/v1/mapbox/dark-v11/static/${data.homeCoordinates[0]},${data.homeCoordinates[1]},13,0/800x1200@2x?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw")`,
-              transform: 'scale(1.2)',
-            }}
-          />
-          {/* Gradient overlay for depth */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-black/30"></div>
-          {/* Subtle vignette */}
-          <div className="absolute inset-0" style={{ background: 'radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.6) 100%)' }}></div>
+          <LocalMap center={data.homeCoordinates} className="w-full h-full" />
         </div>
       )}
 
