@@ -13,54 +13,37 @@ Open [http://localhost:3000](http://localhost:3000)
 
 ## Deployment
 
-Static export for GitHub Pages:
-
 ```bash
 pnpm build
 # Output in /out - deploy to GitHub Pages
 ```
 
-## URL Parameters
+## URL Structure
 
-Load different views using query params:
+| Route | Description |
+|-------|-------------|
+| `/` | Admin preview with audience switcher |
+| `/s/{pmHash}/owner` | Owner shareable view |
+| `/s/{pmHash}/guest` | Guest shareable view |
+| `/s/{pmHash}/staff` | Staff shareable view |
+| `/s/hostai` | HostAI platform view |
+
+## Data Architecture
+
+**Privacy-first design** - no PII stored. All identifiers are one-way hashes.
 
 ```
-/?view=owner     → Owner business view
-/?view=guest     → Guest journey view
-/?view=staff     → Staff appreciation view
-/?view=hostai    → Platform view
+examples/consolidated/
+├── {pmHash}.json    # One file per property manager (all audiences)
+└── platform.json    # HostAI global stats
 ```
 
-Or load custom data:
-```
-/?data=examples/guest-sample.json
-```
+Each PM file contains:
+- **Owner stats** - Revenue, occupancy, impact metrics
+- **Staff records** - Keyed by `hash(email)`
+- **Guest records** - Keyed by `hash(email)`
 
-## SDK
-
-Generate wrapped data for your users:
-
-```typescript
-import { WrappedSDK } from '@/lib/sdk';
-
-const data = WrappedSDK.generateGuestData({
-  year: 2025,
-  propertyName: 'My Property',
-  guestName: 'Guest Name',
-  // ... see examples/*.json for all fields
-});
-
-const json = WrappedSDK.export(data);
-```
-
-See [SDK.md](./SDK.md) for full docs.
-
-## Sample Data
-
-`examples/` contains sample JSON files:
-- `owner-sample.json` - Property owner metrics
-- `guest-sample.json` - Guest journey data
-- `staff-sample.json` - Staff achievements
+**[Full Data Schema Documentation →](./examples/consolidated/README.md)**
 
 ## Tech Stack
 
@@ -68,4 +51,3 @@ See [SDK.md](./SDK.md) for full docs.
 - TypeScript
 - Tailwind CSS
 - D3.js + Leaflet (maps)
-- Recharts

@@ -5,12 +5,24 @@ import { Audience } from '@/lib/types';
 import { typography } from '@/lib/design-system';
 
 interface OutroSlideProps {
-  summary: string;
-  isLoading: boolean;
   audience: Audience;
 }
 
-export const OutroSlide: React.FC<OutroSlideProps> = ({ summary, isLoading, audience }) => {
+const getSummary = (audience: Audience): string => {
+  switch (audience) {
+    case 'GUEST':
+      return "You were one of <strong>842 guests</strong> who made this year unforgettable. We can't wait to welcome you back for another <strong>5-star stay</strong>.";
+    case 'STAFF':
+      return "Your hard work delivered <strong>5-star hospitality</strong> to over <strong>800 guests</strong>. Thank you for making every stay magical.";
+    case 'HOSTAI':
+      return "We powered over <strong>12,000 properties</strong> this year, processing <strong>$450M in value</strong>. Together, we are building the <strong>future of hospitality</strong>.";
+    default:
+      return "You welcomed <strong>842 guests</strong> during a record-breaking <strong>Spring season</strong>. Your commitment to <strong>5-star hospitality</strong> set a new standard.";
+  }
+};
+
+export const OutroSlide: React.FC<OutroSlideProps> = ({ audience }) => {
+  const summary = getSummary(audience);
 
   return (
     <div className="flex flex-col h-full justify-center px-8 pb-20 text-center">
@@ -26,23 +38,15 @@ export const OutroSlide: React.FC<OutroSlideProps> = ({ summary, isLoading, audi
         <h2 className={`${typography.hero} mb-12 drop-shadow-md`}>2025 Wrapped</h2>
 
         <div className="bg-black/20 backdrop-blur-md rounded-[2.5rem] p-8 border border-white/10 relative min-h-[200px] flex items-center justify-center shadow-2xl">
-            {isLoading || !summary ? (
-                <div className="flex gap-2">
-                    <div className="w-2 h-2 bg-white rounded-full animate-bounce"></div>
-                    <div className="w-2 h-2 bg-white rounded-full animate-bounce" style={{ animationDelay: '75ms' }}></div>
-                    <div className="w-2 h-2 bg-white rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
-                </div>
-            ) : (
-                <div
-                  className={`${typography.body} text-white/90
-                  [&>strong]:text-white
-                  [&>strong]:font-serif
-                  [&>strong]:italic
-                  [&>strong]:font-bold
-                  [&>strong]:mx-1`}
-                  dangerouslySetInnerHTML={{ __html: summary }}
-                />
-            )}
+            <div
+              className={`${typography.body} text-white/90
+              [&>strong]:text-white
+              [&>strong]:font-serif
+              [&>strong]:italic
+              [&>strong]:font-bold
+              [&>strong]:mx-1`}
+              dangerouslySetInnerHTML={{ __html: summary }}
+            />
         </div>
 
         <div className="mt-12 space-y-4">

@@ -1,0 +1,216 @@
+{
+  "pmId": "a7f3c2",
+  "year": 2025,
+  "generatedAt": "2025-01-15T10:30:00.000Z",
+
+  "owner": {
+    "propertyName": "Horizon Stays",
+    "propertyLocation": {
+      "city": "Washington",
+      "region": "DC",
+      "country": "USA",
+      "coordinates": [-77.0369, 38.9072]
+    },
+    "totalRevenue": 824000,
+    "otaSavings": 142000,
+    "directBookingIncrease": 28,
+    "occupancyRate": 84,
+    "totalGuests": 756,
+    "totalNights": 68420,
+    "websiteVisits": 10892,
+    "topSearchTerm": "downtown luxury rentals",
+    "sheetsCleaned": 2980,
+    "toiletriesRestocked": 1085,
+    "batteriesReplaced": 72,
+    "economicImpact": 1180000,
+    "localBusinessesSupported": 24,
+    "busiestDate": "June 14",
+    "biggestBooking": {
+      "amount": 32450,
+      "nights": 156,
+      "propertyName": "Urban Loft with Skyline Views"
+    },
+    "monthlyData": [
+      { "month": "Jan", "occupancy": 65, "revenue": 45000 },
+      { "month": "Feb", "occupancy": 70, "revenue": 52000 },
+      { "month": "Mar", "occupancy": 85, "revenue": 78000 },
+      { "month": "Apr", "occupancy": 92, "revenue": 89000 },
+      { "month": "May", "occupancy": 98, "revenue": 95000 },
+      { "month": "Jun", "occupancy": 95, "revenue": 92000 },
+      { "month": "Jul", "occupancy": 88, "revenue": 85000 },
+      { "month": "Aug", "occupancy": 80, "revenue": 75000 },
+      { "month": "Sep", "occupancy": 90, "revenue": 88000 },
+      { "month": "Oct", "occupancy": 94, "revenue": 91000 },
+      { "month": "Nov", "occupancy": 82, "revenue": 70000 },
+      { "month": "Dec", "occupancy": 75, "revenue": 60000 }
+    ],
+    "guestOrigins": [
+      { "city": "London", "country": "UK", "count": 124, "coordinates": [-0.1276, 51.5074] },
+      { "city": "New York", "country": "USA", "count": 98, "coordinates": [-74.006, 40.7128] },
+      { "city": "Los Angeles", "country": "USA", "count": 85, "coordinates": [-118.2437, 34.0522] },
+      { "city": "Paris", "country": "France", "count": 65, "coordinates": [2.3522, 48.8566] },
+      { "city": "Tokyo", "country": "Japan", "count": 42, "coordinates": [139.6917, 35.6895] },
+      { "city": "Austin", "country": "USA", "count": 38, "coordinates": [-97.7431, 30.2672] },
+      { "city": "Chicago", "country": "USA", "count": 35, "coordinates": [-87.6298, 41.8781] },
+      { "city": "Miami", "country": "USA", "count": 32, "coordinates": [-80.1918, 25.7617] }
+    ],
+    "spotlightReview": {
+      "text": "Incredible experience from start to finish. The space was immaculate.",
+      "rating": 5,
+      "guestHash": "j4w8v2",
+      "propertyName": "Horizon Premier Suite"
+    }
+  },
+
+  "staff": {
+    "x9k2m1": {
+      "role": "Lead Housekeeper",
+      "cleaningHours": 1240,
+      "turnoversCompleted": 312,
+      "fiveStarReviewsEarned": 89,
+      "sheetsChanged": 1872,
+      "towelsFolded": 3744,
+      "batteriesReplaced": 28,
+      "guestCompliments": [
+        { "text": "Room was spotless!", "date": "2025-04-12" },
+        { "text": "Best turnover service ever", "date": "2025-06-23" },
+        { "text": "The attention to detail is incredible", "date": "2025-09-05" }
+      ]
+    },
+    "p3n7q8": {
+      "role": "Maintenance Technician",
+      "cleaningHours": 0,
+      "maintenanceResolved": 67,
+      "batteriesReplaced": 44,
+      "fiveStarReviewsEarned": 23,
+      "guestCompliments": [
+        { "text": "Fixed the AC within an hour!", "date": "2025-05-18" },
+        { "text": "Super responsive to our request", "date": "2025-08-02" }
+      ]
+    },
+    "r8t4w2": {
+      "role": "Guest Services Coordinator",
+      "cleaningHours": 0,
+      "fiveStarReviewsEarned": 22,
+      "guestCompliments": [
+        { "text": "Amazing restaurant recommendations", "date": "2025-03-28" },
+        { "text": "Made our anniversary stay so special", "date": "2025-07-14" }
+      ]
+    }
+  },
+
+  "guests": {
+    "j4w8v2": {
+      "origin": {
+        "city": "Austin",
+        "country": "USA",
+        "coordinates": [-97.7431, 30.2672]
+      },
+      "stayDates": {
+        "checkIn": "2025-03-15",
+        "checkOut": "2025-03-22"
+      },
+      "nightsStayed": 7,
+      "propertyName": "Horizon Premier Suite",
+      "localSpend": 1840,
+      "savedVsHotel": 420,
+      "coffeesPoured": 14,
+      "theirReview": {
+        "text": "Perfect getaway spot. The neighborhood guide was super helpful!",
+        "rating": 5,
+        "date": "2025-03-23"
+      }
+    },
+    "m2k9r5": {
+      "origin": {
+        "city": "London",
+        "country": "UK",
+        "coordinates": [-0.1276, 51.5074]
+      },
+      "stayDates": {
+        "checkIn": "2025-06-10",
+        "checkOut": "2025-06-17"
+      },
+      "nightsStayed": 7,
+      "propertyName": "Urban Loft with Skyline Views",
+      "localSpend": 2150,
+      "savedVsHotel": 580,
+      "coffeesPoured": 21,
+      "theirReview": {
+        "text": "Absolutely stunning views and impeccable service. Will definitely return!",
+        "rating": 5,
+        "date": "2025-06-18"
+      }
+    },
+    "q7t3x1": {
+      "origin": {
+        "city": "Tokyo",
+        "country": "Japan",
+        "coordinates": [139.6917, 35.6895]
+      },
+      "stayDates": {
+        "checkIn": "2025-04-01",
+        "checkOut": "2025-04-05"
+      },
+      "nightsStayed": 4,
+      "propertyName": "Horizon Premier Suite",
+      "localSpend": 890,
+      "savedVsHotel": 310,
+      "coffeesPoured": 8,
+      "theirReview": {
+        "text": "Clean, convenient, and the local tips were invaluable.",
+        "rating": 5,
+        "date": "2025-04-06"
+      }
+    },
+    "k5p2n8": {
+      "origin": {
+        "city": "New York",
+        "country": "USA",
+        "coordinates": [-74.006, 40.7128]
+      },
+      "stayDates": {
+        "checkIn": "2025-05-20",
+        "checkOut": "2025-05-25"
+      },
+      "nightsStayed": 5,
+      "propertyName": "Downtown Studio",
+      "localSpend": 1200,
+      "savedVsHotel": 375,
+      "coffeesPoured": 10
+    },
+    "w3m6v9": {
+      "origin": {
+        "city": "Paris",
+        "country": "France",
+        "coordinates": [2.3522, 48.8566]
+      },
+      "stayDates": {
+        "checkIn": "2025-09-12",
+        "checkOut": "2025-09-19"
+      },
+      "nightsStayed": 7,
+      "propertyName": "Urban Loft with Skyline Views",
+      "localSpend": 1980,
+      "savedVsHotel": 520,
+      "coffeesPoured": 18,
+      "theirReview": {
+        "text": "Magnifique! The apartment exceeded all expectations.",
+        "rating": 5,
+        "date": "2025-09-20"
+      }
+    }
+  },
+
+  "staffAggregates": {
+    "totalCleaningHours": 1920,
+    "totalFiveStarReviews": 134,
+    "totalStaffCount": 3
+  },
+
+  "guestAggregates": {
+    "totalCoffeesPoured": 8540,
+    "totalLocalSpend": 892000,
+    "averageStayLength": 4.8
+  }
+}

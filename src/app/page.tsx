@@ -12,7 +12,6 @@ import { OutroSlide } from '@/components/slides/OutroSlide';
 import { AdminControls } from '@/components/AdminControls';
 import { mockHostData } from '@/lib/data';
 import { SlideType, Audience } from '@/lib/types';
-import { generateYearSummary } from '@/services/geminiService';
 
 // Sophisticated Gradients
 const gradients: Record<SlideType, string> = {
@@ -48,10 +47,6 @@ function HomeContent() {
   // Map Controls State
   const [mapViewMode, setMapViewMode] = useState<'GLOBE' | 'MAP' | 'LOCAL'>('GLOBE');
   const [isMapPlaying, setIsMapPlaying] = useState(true);
-
-  // AI Summary State (Pre-fetching)
-  const [aiSummary, setAiSummary] = useState<string>("");
-  const [isSummaryLoading, setIsSummaryLoading] = useState(false);
 
   // Handle legacy URL params: ?view=guest, ?view=owner (route params preferred now)
   useEffect(() => {
@@ -96,19 +91,6 @@ function HomeContent() {
         setProgress(0);
     }
   }, [audience, slides.length, currentSlideIndex]);
-
-  // Pre-fetch AI Summary when audience changes
-  useEffect(() => {
-    const fetchSummary = async () => {
-        setIsSummaryLoading(true);
-        // Reset summary while loading new context
-        setAiSummary("");
-        const summary = await generateYearSummary(mockHostData, audience);
-        setAiSummary(summary);
-        setIsSummaryLoading(false);
-    };
-    fetchSummary();
-  }, [audience]);
 
   // Conditional Background Image logic - Full bleed property images
   const getBackgroundImage = () => {
@@ -181,7 +163,7 @@ function HomeContent() {
       case SlideType.STATS: return <StatsSlide data={mockHostData} audience={audience} />;
       case SlideType.SEASONS: return <SeasonSlide key={`season-${currentSlideIndex}`} data={mockHostData} />;
       case SlideType.REVIEW: return <ReviewSlide data={mockHostData} />;
-      case SlideType.OUTRO: return <OutroSlide summary={aiSummary} isLoading={isSummaryLoading} audience={audience} />;
+      case SlideType.OUTRO: return <OutroSlide audience={audience} />;
       default: return null;
     }
   };

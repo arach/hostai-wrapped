@@ -9,7 +9,6 @@ import { ReviewSlide } from '@/components/slides/ReviewSlide';
 import { OutroSlide } from '@/components/slides/OutroSlide';
 import { mockHostData } from '@/lib/data';
 import { SlideType, Audience } from '@/lib/types';
-import { generateYearSummary } from '@/services/geminiService';
 
 const gradients: Record<SlideType, string> = {
   [SlideType.INTRO]: 'bg-gradient-to-br from-[#2e1065] via-[#4c1d95] to-[#be185d]',
@@ -31,23 +30,10 @@ export default function HostAIView() {
   const [isPaused, setIsPaused] = useState(false);
   const [mapViewMode] = useState<'GLOBE' | 'MAP' | 'LOCAL'>('GLOBE');
   const [isMapPlaying] = useState(true);
-  const [aiSummary, setAiSummary] = useState<string>("");
-  const [isSummaryLoading, setIsSummaryLoading] = useState(false);
 
   // HostAI slide order: Intro, Scale (Stats), Network (Map), Review (Testimonial), Vision (Outro)
   const slides: SlideType[] = [SlideType.INTRO, SlideType.STATS, SlideType.MAP, SlideType.REVIEW, SlideType.OUTRO];
   const currentSlide = slides[currentSlideIndex] || SlideType.INTRO;
-
-  useEffect(() => {
-    const fetchSummary = async () => {
-      setIsSummaryLoading(true);
-      setAiSummary("");
-      const summary = await generateYearSummary(hostData, audience);
-      setAiSummary(summary);
-      setIsSummaryLoading(false);
-    };
-    fetchSummary();
-  }, []);
 
   const getBackgroundImage = () => {
     if (currentSlide === SlideType.INTRO) return "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&auto=format&fit=crop";
@@ -95,7 +81,7 @@ export default function HostAIView() {
       case SlideType.MAP: return <GuestMapSlide data={hostData} viewMode={mapViewMode} isPlaying={isMapPlaying} audience={audience} />;
       case SlideType.STATS: return <StatsSlide data={hostData} audience={audience} />;
       case SlideType.REVIEW: return <ReviewSlide data={hostData} />;
-      case SlideType.OUTRO: return <OutroSlide summary={aiSummary} isLoading={isSummaryLoading} audience={audience} />;
+      case SlideType.OUTRO: return <OutroSlide audience={audience} />;
       default: return null;
     }
   };

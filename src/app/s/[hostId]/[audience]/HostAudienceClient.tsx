@@ -10,7 +10,6 @@ import { ReviewSlide } from '@/components/slides/ReviewSlide';
 import { OutroSlide } from '@/components/slides/OutroSlide';
 import { mockHostData } from '@/lib/data';
 import { SlideType, Audience } from '@/lib/types';
-import { generateYearSummary } from '@/services/geminiService';
 
 const gradients: Record<SlideType, string> = {
   [SlideType.INTRO]: 'bg-gradient-to-br from-[#2e1065] via-[#4c1d95] to-[#be185d]',
@@ -49,8 +48,6 @@ export default function HostAudienceClient({ hostId, audienceParam }: HostAudien
   const [isPaused, setIsPaused] = useState(false);
   const [mapViewMode] = useState<'GLOBE' | 'MAP' | 'LOCAL'>('GLOBE');
   const [isMapPlaying] = useState(true);
-  const [aiSummary, setAiSummary] = useState<string>("");
-  const [isSummaryLoading, setIsSummaryLoading] = useState(false);
 
   const getSlides = (aud: Audience): SlideType[] => {
     switch (aud) {
@@ -66,17 +63,6 @@ export default function HostAudienceClient({ hostId, audienceParam }: HostAudien
 
   const slides = getSlides(audience);
   const currentSlide = slides[currentSlideIndex] || SlideType.INTRO;
-
-  useEffect(() => {
-    const fetchSummary = async () => {
-      setIsSummaryLoading(true);
-      setAiSummary("");
-      const summary = await generateYearSummary(hostData, audience);
-      setAiSummary(summary);
-      setIsSummaryLoading(false);
-    };
-    fetchSummary();
-  }, [audience]);
 
   const getBackgroundImage = () => {
     if (currentSlide === SlideType.INTRO) {
@@ -130,7 +116,7 @@ export default function HostAudienceClient({ hostId, audienceParam }: HostAudien
       case SlideType.STATS: return <StatsSlide data={hostData} audience={audience} />;
       case SlideType.SEASONS: return <SeasonSlide key={`season-${currentSlideIndex}`} data={hostData} />;
       case SlideType.REVIEW: return <ReviewSlide data={hostData} />;
-      case SlideType.OUTRO: return <OutroSlide summary={aiSummary} isLoading={isSummaryLoading} audience={audience} />;
+      case SlideType.OUTRO: return <OutroSlide audience={audience} />;
       default: return null;
     }
   };

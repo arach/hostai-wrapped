@@ -1,0 +1,38 @@
+{
+  "year": 2025,
+  "generatedAt": "2025-01-15T10:30:00.000Z",
+
+  "totalPropertiesManaged": 12400,
+  "totalPropertyManagers": 1850,
+  "countriesActive": 85,
+
+  "platformGlobalRevenue": 2400000000,
+  "totalBookingValue": 890000000,
+
+  "aiConversationsHandled": 4200000,
+  "averageResponseTime": 2.3,
+
+  "globalEconomicImpact": 3200000000,
+  "totalGuestsServed": 2800000,
+
+  "yoyGrowth": 47,
+
+  "testimonials": [
+    {
+      "text": "HostAI transformed our guest communication. Response times dropped from hours to seconds.",
+      "pmRegion": "North America"
+    },
+    {
+      "text": "The AI handles 80% of inquiries automatically. My team can finally focus on exceptional service.",
+      "pmRegion": "Europe"
+    },
+    {
+      "text": "Direct bookings increased 34% since implementing HostAI. The ROI speaks for itself.",
+      "pmRegion": "Asia Pacific"
+    },
+    {
+      "text": "Managing 200+ properties used to be chaos. Now it's seamless.",
+      "pmRegion": "Latin America"
+    }
+  ]
+}
