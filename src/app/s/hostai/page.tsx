@@ -13,6 +13,7 @@ import { SlideType, Audience } from '@/lib/types';
 const gradients: Record<SlideType, string> = {
   [SlideType.INTRO]: 'bg-gradient-to-br from-[#2e1065] via-[#4c1d95] to-[#be185d]',
   [SlideType.MAP]: 'bg-gradient-to-b from-[#020617] via-[#0f172a] to-[#1e1b4b]',
+  [SlideType.DISCOVERY]: 'bg-gradient-to-br from-[#1e3a5f] via-[#2d5a87] to-[#0d9488]',
   [SlideType.STATS]: 'bg-black',
   [SlideType.SEASONS]: 'bg-gradient-to-br from-[#451a03] via-[#7c2d12] to-[#c2410c]',
   [SlideType.REVIEW]: 'bg-gradient-to-br from-[#4a044e] via-[#701a75] to-[#be185d]',

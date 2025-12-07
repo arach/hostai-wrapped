@@ -5,6 +5,7 @@ import { StoryLayout } from '@/components/StoryLayout';
 import { IntroSlide } from '@/components/slides/IntroSlide';
 import { StatsSlide } from '@/components/slides/RevenueSlide';
 import { GuestMapSlide } from '@/components/slides/GuestMapSlide';
+import { DiscoverySlide } from '@/components/slides/DiscoverySlide';
 import { SeasonSlide } from '@/components/slides/SeasonSlide';
 import { ReviewSlide } from '@/components/slides/ReviewSlide';
 import { OutroSlide } from '@/components/slides/OutroSlide';
@@ -14,6 +15,7 @@ import { SlideType, Audience } from '@/lib/types';
 const gradients: Record<SlideType, string> = {
   [SlideType.INTRO]: 'bg-gradient-to-br from-[#2e1065] via-[#4c1d95] to-[#be185d]',
   [SlideType.MAP]: 'bg-gradient-to-b from-[#020617] via-[#0f172a] to-[#1e1b4b]',
+  [SlideType.DISCOVERY]: 'bg-gradient-to-br from-[#1e3a5f] via-[#2d5a87] to-[#0d9488]',
   [SlideType.STATS]: 'bg-black',
   [SlideType.SEASONS]: 'bg-gradient-to-br from-[#451a03] via-[#7c2d12] to-[#c2410c]',
   [SlideType.REVIEW]: 'bg-gradient-to-br from-[#4a044e] via-[#701a75] to-[#be185d]',
@@ -57,7 +59,7 @@ export default function HostAudienceClient({ hostId, audienceParam }: HostAudien
         return [SlideType.INTRO, SlideType.STATS, SlideType.REVIEW, SlideType.MAP, SlideType.OUTRO];
       case 'OWNER':
       default:
-        return [SlideType.INTRO, SlideType.MAP, SlideType.STATS, SlideType.SEASONS, SlideType.REVIEW, SlideType.OUTRO];
+        return [SlideType.INTRO, SlideType.MAP, SlideType.DISCOVERY, SlideType.STATS, SlideType.SEASONS, SlideType.REVIEW, SlideType.OUTRO];
     }
   };
 
@@ -113,6 +115,7 @@ export default function HostAudienceClient({ hostId, audienceParam }: HostAudien
     switch (currentSlide) {
       case SlideType.INTRO: return <IntroSlide audience={audience} data={hostData} />;
       case SlideType.MAP: return <GuestMapSlide data={hostData} viewMode={mapViewMode} isPlaying={isMapPlaying} audience={audience} />;
+      case SlideType.DISCOVERY: return <DiscoverySlide data={hostData} />;
       case SlideType.STATS: return <StatsSlide data={hostData} audience={audience} />;
       case SlideType.SEASONS: return <SeasonSlide key={`season-${currentSlideIndex}`} data={hostData} />;
       case SlideType.REVIEW: return <ReviewSlide data={hostData} />;
