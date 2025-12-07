@@ -12,8 +12,8 @@ interface AdminControlsProps {
   isPaused: boolean;
   setIsPaused: (paused: boolean) => void;
   // Map Specifics
-  mapViewMode: 'GLOBE' | 'MAP';
-  setMapViewMode: (mode: 'GLOBE' | 'MAP') => void;
+  mapViewMode: 'GLOBE' | 'MAP' | 'LOCAL';
+  setMapViewMode: (mode: 'GLOBE' | 'MAP' | 'LOCAL') => void;
   isMapPlaying: boolean;
   setIsMapPlaying: (playing: boolean) => void;
   currentSlideType: SlideType;
@@ -109,13 +109,19 @@ export const AdminControls: React.FC<AdminControlsProps> = ({
                         onClick={() => setMapViewMode('GLOBE')}
                         className={`px-3 py-1 rounded-md text-[10px] font-bold transition-all ${mapViewMode === 'GLOBE' ? 'bg-zinc-600 text-white' : 'text-zinc-400'}`}
                     >
-                        3D Globe
+                        Globe
                     </button>
                     <button
                         onClick={() => setMapViewMode('MAP')}
                         className={`px-3 py-1 rounded-md text-[10px] font-bold transition-all ${mapViewMode === 'MAP' ? 'bg-zinc-600 text-white' : 'text-zinc-400'}`}
                     >
-                        2D Map
+                        Map
+                    </button>
+                    <button
+                        onClick={() => setMapViewMode('LOCAL')}
+                        className={`px-3 py-1 rounded-md text-[10px] font-bold transition-all ${mapViewMode === 'LOCAL' ? 'bg-zinc-600 text-white' : 'text-zinc-400'}`}
+                    >
+                        Local
                     </button>
                 </div>
 

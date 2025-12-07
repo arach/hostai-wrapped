@@ -33,7 +33,7 @@ export default function Home() {
   const [isPaused, setIsPaused] = useState(false);
 
   // Map Controls State
-  const [mapViewMode, setMapViewMode] = useState<'GLOBE' | 'MAP'>('GLOBE');
+  const [mapViewMode, setMapViewMode] = useState<'GLOBE' | 'MAP' | 'LOCAL'>('GLOBE');
   const [isMapPlaying, setIsMapPlaying] = useState(true);
 
   // AI Summary State (Pre-fetching)

@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { HostData, Audience } from '@/lib/types';
+import { GuestMapSlide } from './GuestMapSlide';
 
 interface StatsSlideProps {
   data: HostData;
@@ -76,29 +77,46 @@ export const StatsSlide: React.FC<StatsSlideProps> = ({ data, audience }) => {
 
   const renderGuestView = () => (
     <>
-      <div className="animate-slide-up">
-        <div className="inline-block bg-blue-500/20 text-blue-300 border border-blue-500/30 px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-[0.2em] mb-6 backdrop-blur-sm font-sans">
-          Community Impact
+      {/* Background Map Visualization - Embedded directly for Guest Impact */}
+      <div className="absolute inset-0 z-0 pointer-events-none">
+          <GuestMapSlide
+            data={data}
+            viewMode="LOCAL"
+            isPlaying={true}
+            audience={audience}
+            hideHeader={true}
+            className="w-full h-full"
+          />
+          {/* Gradient overlay to ensure text readability at the bottom */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent" />
+      </div>
+
+      <div className="relative z-10 animate-slide-up">
+        <div className="flex items-center justify-between mb-6">
+            <div className="inline-block bg-blue-500/20 text-blue-300 border border-blue-500/30 px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-[0.2em] backdrop-blur-sm font-sans">
+            Community Impact
+            </div>
         </div>
-        <h2 className="text-6xl md:text-7xl font-serif font-bold tracking-tighter mb-6 leading-[0.9]">
+
+        <h2 className="text-6xl md:text-7xl font-serif font-bold tracking-tighter mb-6 leading-[0.9] drop-shadow-xl">
           More than <br/>a stay.
         </h2>
-        <p className="text-xl font-sans font-light text-white/90 leading-relaxed mb-8">
+        <p className="text-xl font-sans font-light text-white/90 leading-relaxed mb-8 drop-shadow-lg">
            Guests like you contributed over <span className="text-blue-400 font-bold font-serif italic text-2xl">${(data.economicImpact / 1000000).toFixed(1)}M</span> to our local economy.
         </p>
-        <p className="text-lg font-sans font-light text-white/60 leading-relaxed mb-8">
+        <p className="text-lg font-sans font-light text-white/60 leading-relaxed mb-8 drop-shadow-md">
            We&apos;re incredibly thankful for you choosing to support local.
         </p>
       </div>
 
-      <div className="animate-slide-up grid grid-cols-2 gap-4 font-sans" style={{ animationDelay: '0.2s' }}>
+      <div className="relative z-10 animate-slide-up grid grid-cols-2 gap-4 font-sans" style={{ animationDelay: '0.2s' }}>
           {/* Local Shops */}
-          <div className="bg-white/5 p-5 rounded-2xl border border-white/10 backdrop-blur-sm">
+          <div className="bg-white/5 p-5 rounded-2xl border border-white/10 backdrop-blur-sm shadow-xl">
               <div className="text-2xl font-bold mb-1 tracking-tight">{data.localBusinessesSupported}</div>
               <div className="text-[10px] uppercase tracking-wider text-white/50">Small Businesses Supported</div>
           </div>
           {/* Coffees */}
-          <div className="bg-white/5 p-5 rounded-2xl border border-white/10 backdrop-blur-sm">
+          <div className="bg-white/5 p-5 rounded-2xl border border-white/10 backdrop-blur-sm shadow-xl">
               <div className="text-2xl font-bold mb-1 tracking-tight">{data.communityCoffeeCount.toLocaleString()}</div>
               <div className="text-[10px] uppercase tracking-wider text-white/50">Local Coffees Poured</div>
           </div>
@@ -199,7 +217,7 @@ export const StatsSlide: React.FC<StatsSlideProps> = ({ data, audience }) => {
   );
 
   return (
-    <div className="flex flex-col h-full justify-center px-8 pb-20">
+    <div className="flex flex-col h-full justify-center px-8 pb-20 relative">
       <div className="space-y-12">
         {audience === 'OWNER' && renderOwnerView()}
         {audience === 'GUEST' && renderGuestView()}

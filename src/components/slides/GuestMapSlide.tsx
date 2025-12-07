@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useMemo } from 'react';
 import * as d3 from 'd3';
 import { HostData, Audience } from '@/lib/types';
 import * as topojson from 'topojson-client';
@@ -26,9 +26,11 @@ const MAP_CONSTANTS = {
 
 interface GuestMapSlideProps {
   data: HostData;
-  viewMode: 'GLOBE' | 'MAP';
+  viewMode: 'GLOBE' | 'MAP' | 'LOCAL';
   isPlaying: boolean;
   audience?: Audience;
+  hideHeader?: boolean;
+  className?: string;
 }
 
 interface ArcData {
@@ -38,7 +40,14 @@ interface ArcData {
   isUser: boolean;
 }
 
-export const GuestMapSlide: React.FC<GuestMapSlideProps> = ({ data, viewMode, isPlaying, audience }) => {
+export const GuestMapSlide: React.FC<GuestMapSlideProps> = ({
+  data,
+  viewMode,
+  isPlaying,
+  audience,
+  hideHeader = false,
+  className = ""
+}) => {
   const svgRef = useRef<SVGSVGElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -52,8 +61,30 @@ export const GuestMapSlide: React.FC<GuestMapSlideProps> = ({ data, viewMode, is
   // Animation State Refs
   const rotationRef = useRef<[number, number, number]>([-data.homeCoordinates[0], -20, 0]);
 
-  // 1. Fetch Topology Data Once
+  // Synthetic Local Data (Memoized so points don't jump around)
+  const localPoints = useMemo(() => {
+    return Array.from({ length: 30 }).map(() => {
+      // Generate random points near homeCoordinates
+      const r = Math.random() * 0.015; // Radius approx 1-2km
+      const theta = Math.random() * 2 * Math.PI;
+      return {
+        coordinates: [
+          data.homeCoordinates[0] + r * Math.cos(theta),
+          data.homeCoordinates[1] + r * Math.sin(theta)
+        ],
+        type: Math.random() > 0.5 ? 'coffee' : 'business'
+      };
+    });
+  }, [data.homeCoordinates]);
+
+  // 1. Fetch Topology Data Once (Only needed for Globe/Map)
   useEffect(() => {
+    if (viewMode === 'LOCAL') {
+      setLoading(false);
+      return;
+    }
+
+    setLoading(true);
     d3.json("https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json")
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       .then((world: any) => {
@@ -64,14 +95,16 @@ export const GuestMapSlide: React.FC<GuestMapSlideProps> = ({ data, viewMode, is
         console.error("Failed to load map data", err);
         setLoading(false);
       });
-  }, []);
+  }, [viewMode]);
 
   // 2. D3 Render Loop
   useEffect(() => {
-    if (!svgRef.current || !containerRef.current || !worldData) return;
+    // If LOCAL, we don't need worldData. If GLOBE/MAP, we do.
+    const readyToRender = svgRef.current && containerRef.current && (viewMode === 'LOCAL' || worldData);
+    if (!readyToRender) return;
 
-    const width = containerRef.current.clientWidth;
-    const height = containerRef.current.clientHeight;
+    const width = containerRef.current!.clientWidth;
+    const height = containerRef.current!.clientHeight;
 
     // Clear previous render
     const svg = d3.select(svgRef.current);
@@ -92,46 +125,45 @@ export const GuestMapSlide: React.FC<GuestMapSlideProps> = ({ data, viewMode, is
         .translate([width / 2, height / 2])
         .clipAngle(90)
         .rotate(rotationRef.current);
-    } else {
+    } else if (viewMode === 'MAP') {
       projection = d3.geoEquirectangular()
         .scale(width / 6.5)
         .translate([width / 2, height / 2])
         .rotate([-10, 0, 0]);
+    } else { // LOCAL
+      projection = d3.geoMercator()
+        .center(data.homeCoordinates as [number, number])
+        .scale(3000000) // Extreme Zoom for street/zipcode level
+        .translate([width / 2, height / 2]);
     }
 
     const path = d3.geoPath().projection(projection);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const countries = topojson.feature(worldData, worldData.objects.countries) as any;
 
     // Prepare Data
-    // We slice to maxArcs, then distribute them evenly across 12 months for animation trigger
     const targetOrigins = data.topGuestOrigins.slice(0, MAP_CONSTANTS.maxArcs);
-
     const hostPoint = { type: "Point", coordinates: data.homeCoordinates };
 
     const arcsData: ArcData[] = targetOrigins.map((o, i) => ({
       type: "LineString",
       coordinates: [o.coordinates, data.homeCoordinates],
-      // Distribute launch month evenly based on index (0 to 11)
       launchMonth: Math.floor((i / targetOrigins.length) * 12),
       isUser: false
     }));
 
-    // If Audience is Guest, add specific User Arc
     if (audience === 'GUEST' && data.userOrigin) {
-        arcsData.push({
-            type: "LineString",
-            coordinates: [data.userOrigin.coordinates, data.homeCoordinates],
-            launchMonth: 0, // Launch early
-            isUser: true
-        });
+      arcsData.push({
+        type: "LineString",
+        coordinates: [data.userOrigin.coordinates, data.homeCoordinates],
+        launchMonth: 0,
+        isUser: true
+      });
     }
 
     // --- LAYERS ---
     const globeGroup = svg.append("g");
 
     if (viewMode === 'GLOBE') {
-       globeGroup.append("path")
+      globeGroup.append("path")
         .datum({ type: "Sphere" })
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         .attr("d", path as any)
@@ -139,16 +171,16 @@ export const GuestMapSlide: React.FC<GuestMapSlideProps> = ({ data, viewMode, is
         .attr("stroke", "rgba(255,255,255,0.1)")
         .attr("stroke-width", 1);
 
-       const defs = svg.append("defs");
-       const gradient = defs.append("radialGradient")
-           .attr("id", "atmosphere")
-           .attr("cx", "50%")
-           .attr("cy", "50%")
-           .attr("r", "50%");
-       gradient.append("stop").attr("offset", "80%").attr("stop-color", "rgba(37,99,235,0)");
-       gradient.append("stop").attr("offset", "100%").attr("stop-color", "rgba(37,99,235,0.2)");
+      const defs = svg.append("defs");
+      const gradient = defs.append("radialGradient")
+        .attr("id", "atmosphere")
+        .attr("cx", "50%")
+        .attr("cy", "50%")
+        .attr("r", "50%");
+      gradient.append("stop").attr("offset", "80%").attr("stop-color", "rgba(37,99,235,0)");
+      gradient.append("stop").attr("offset", "100%").attr("stop-color", "rgba(37,99,235,0.2)");
 
-       globeGroup.append("path")
+      globeGroup.append("path")
         .datum({ type: "Sphere" })
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         .attr("d", path as any)
@@ -156,117 +188,205 @@ export const GuestMapSlide: React.FC<GuestMapSlideProps> = ({ data, viewMode, is
         .style("pointer-events", "none");
     }
 
-    globeGroup.selectAll("path.land")
-      .data(countries.features)
-      .enter().append("path")
-      .attr("class", "land")
+    // Only draw land in GLOBE/MAP mode
+    if (viewMode !== 'LOCAL' && worldData) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      .attr("d", path as any)
-      .attr("fill", MAP_CONSTANTS.colors.land)
-      .attr("stroke", MAP_CONSTANTS.colors.landBorder)
-      .attr("stroke-width", 0.5);
+      const countries = topojson.feature(worldData, worldData.objects.countries) as any;
+      globeGroup.selectAll("path.land")
+        .data(countries.features)
+        .enter().append("path")
+        .attr("class", "land")
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        .attr("d", path as any)
+        .attr("fill", MAP_CONSTANTS.colors.land)
+        .attr("stroke", MAP_CONSTANTS.colors.landBorder)
+        .attr("stroke-width", 0.5);
+    } else if (viewMode === 'LOCAL') {
+      // In local mode, define grid pattern
+      const defs = svg.append("defs");
+      const pattern = defs.append("pattern")
+        .attr("id", "grid")
+        .attr("width", 40)
+        .attr("height", 40)
+        .attr("patternUnits", "userSpaceOnUse");
+      pattern.append("path")
+        .attr("d", "M 40 0 L 0 0 0 40")
+        .attr("fill", "none")
+        .attr("stroke", "rgba(255,255,255,0.1)")
+        .attr("stroke-width", 0.5);
+    }
 
-    // Arcs Group
+    // Arcs Group (Hidden in LOCAL)
     const arcGroup = svg.append("g");
 
-    // Host Marker & Ripples
+    // Markers Group
     const markersGroup = svg.append("g");
 
     // Host Dot
     markersGroup.append("path")
-        .datum(hostPoint)
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        .attr("d", path as any)
-        .attr("fill", MAP_CONSTANTS.colors.hostMarker)
-        .attr("stroke", "white")
-        .attr("stroke-width", 2);
+      .datum(hostPoint)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      .attr("d", path as any)
+      .attr("fill", MAP_CONSTANTS.colors.hostMarker)
+      .attr("stroke", "white")
+      .attr("stroke-width", viewMode === 'LOCAL' ? 4 : 2);
 
-    // Ripple Circle (initially hidden)
+    // --- LOCAL MODE VISUALS ---
+    if (viewMode === 'LOCAL') {
+      const center = projection(data.homeCoordinates as [number, number]);
+      if (center) {
+        // Boundary Circle
+        markersGroup.append("circle")
+          .attr("cx", center[0])
+          .attr("cy", center[1])
+          .attr("r", 150)
+          .attr("fill", "none")
+          .attr("stroke", "rgba(255,255,255,0.3)")
+          .attr("stroke-dasharray", "4 4")
+          .attr("stroke-width", 1.5);
+
+        // Zipcode Label
+        markersGroup.append("text")
+          .attr("x", center[0])
+          .attr("y", center[1] - 160)
+          .attr("text-anchor", "middle")
+          .attr("fill", "rgba(255,255,255,0.8)")
+          .attr("font-family", "monospace")
+          .attr("font-size", "12px")
+          .attr("font-weight", "bold")
+          .attr("letter-spacing", "2px")
+          .text("NEIGHBORHOOD ZONE");
+
+        // Local Points (Coffee, Shops)
+        localPoints.forEach((pt, i) => {
+          const ptCoords = projection(pt.coordinates as [number, number]);
+          if (ptCoords) {
+            markersGroup.append("circle")
+              .attr("cx", ptCoords[0])
+              .attr("cy", ptCoords[1])
+              .attr("r", 0)
+              .attr("fill", pt.type === 'coffee' ? '#fbbf24' : '#22d3ee')
+              .attr("stroke", "rgba(0,0,0,0.5)")
+              .attr("stroke-width", 1)
+              .attr("opacity", 0.9)
+              .transition()
+              .delay(i * 50)
+              .duration(800)
+              .ease(d3.easeBackOut)
+              .attr("r", 4);
+          }
+        });
+
+        // Radar Sweep
+        const radar = markersGroup.append("circle")
+          .attr("cx", center[0])
+          .attr("cy", center[1])
+          .attr("r", 0)
+          .attr("fill", "none")
+          .attr("stroke", "rgba(34, 211, 238, 0.4)")
+          .attr("stroke-width", 2);
+
+        radar.transition()
+          .duration(3000)
+          .ease(d3.easeLinear)
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          .attrTween("r", () => d3.interpolate(0, 200) as any)
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          .attrTween("opacity", () => d3.interpolate(1, 0) as any)
+          .on("end", function repeat() {
+            d3.select(this)
+              .attr("r", 0)
+              .attr("opacity", 1)
+              .transition()
+              .duration(3000)
+              .ease(d3.easeLinear)
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              .attrTween("r", () => d3.interpolate(0, 200) as any)
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              .attrTween("opacity", () => d3.interpolate(1, 0) as any)
+              .on("end", repeat);
+          });
+      }
+    }
+
+    // Ripple Circle for GLOBE view
     const ripple = markersGroup.append("circle")
-        .attr("r", 0)
-        .attr("fill", "none")
-        .attr("stroke", MAP_CONSTANTS.colors.ripple)
-        .attr("stroke-width", 2)
-        .attr("opacity", 0)
-        .style("pointer-events", "none");
+      .attr("r", 0)
+      .attr("fill", "none")
+      .attr("stroke", MAP_CONSTANTS.colors.ripple)
+      .attr("stroke-width", 2)
+      .attr("opacity", 0)
+      .style("pointer-events", "none");
 
-    // Function to trigger a ripple at host location (projected)
     const triggerRipple = () => {
-        const coords = projection(data.homeCoordinates as [number, number]);
-        if (!coords) return;
+      const coords = projection(data.homeCoordinates as [number, number]);
+      if (!coords) return;
 
-        ripple
-            .attr("cx", coords[0])
-            .attr("cy", coords[1])
-            .attr("r", 2)
-            .attr("opacity", 1)
-            .attr("stroke-width", 3)
-            .transition()
-            .duration(800)
-            .ease(d3.easeCircleOut)
-            .attr("r", 20)
-            .attr("opacity", 0)
-            .attr("stroke-width", 0);
+      ripple
+        .attr("cx", coords[0])
+        .attr("cy", coords[1])
+        .attr("r", 2)
+        .attr("opacity", 1)
+        .attr("stroke-width", 3)
+        .transition()
+        .duration(800)
+        .ease(d3.easeCircleOut)
+        .attr("r", 20)
+        .attr("opacity", 0)
+        .attr("stroke-width", 0);
     };
 
-    // State for drawn arcs to avoid re-drawing
     const drawnArcs = new Set<number>();
 
     // --- ANIMATION LOOP ---
     const timer = d3.timer((elapsed) => {
 
-      // 1. Rotation Logic
+      // Rotation (Globe only)
       if (viewMode === 'GLOBE' && isPlayingRef.current) {
         const currentRot = projection.rotate();
         const k = MAP_CONSTANTS.rotationSpeed;
         const newRot: [number, number, number] = [currentRot[0] + k, currentRot[1], currentRot[2]];
-
         projection.rotate(newRot);
         rotationRef.current = newRot;
       }
 
-      // 2. Month Progression Logic
-      // Increment month every ~0.8 second
-      const monthDuration = 800;
-      const totalMonths = 12;
-      const currentMonth = Math.floor((elapsed % (totalMonths * monthDuration)) / monthDuration);
+      // Global Arc Animation (Only in Globe/Map view)
+      if (viewMode !== 'LOCAL') {
+        const monthDuration = 800;
+        const currentMonth = Math.floor((elapsed % (12 * monthDuration)) / monthDuration);
 
-      // 3. Trigger Arcs based on Month
-      arcsData.forEach((d, i) => {
-          // Trigger if current time has passed the launch month for this arc
+        arcsData.forEach((d, i) => {
           const shouldLaunch = d.launchMonth <= currentMonth;
-
           if (shouldLaunch && !drawnArcs.has(i)) {
-              drawnArcs.add(i);
+            drawnArcs.add(i);
+            const pathEl = arcGroup.append("path")
+              .datum(d)
+              .attr("class", "arc")
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              .attr("d", path as any)
+              .attr("fill", "none")
+              .attr("stroke", d.isUser ? MAP_CONSTANTS.colors.userArc : MAP_CONSTANTS.colors.arc)
+              .attr("stroke-width", d.isUser ? 3 : 1.5)
+              .attr("stroke-linecap", "round")
+              .attr("stroke-opacity", d.isUser ? 1 : 0.8)
+              .attr("stroke-dasharray", function (this: SVGPathElement) { return this.getTotalLength() + " " + this.getTotalLength(); })
+              .attr("stroke-dashoffset", function (this: SVGPathElement) { return this.getTotalLength(); });
 
-              // Draw this specific arc
-              const pathEl = arcGroup.append("path")
-                  .datum(d)
-                  .attr("class", "arc")
-                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                  .attr("d", path as any)
-                  .attr("fill", "none")
-                  .attr("stroke", d.isUser ? MAP_CONSTANTS.colors.userArc : MAP_CONSTANTS.colors.arc)
-                  .attr("stroke-width", d.isUser ? 3 : 1.5) // User arc is thicker
-                  .attr("stroke-linecap", "round")
-                  .attr("stroke-opacity", d.isUser ? 1 : 0.8)
-                  .attr("stroke-dasharray", function(this: SVGPathElement) { return this.getTotalLength() + " " + this.getTotalLength(); })
-                  .attr("stroke-dashoffset", function(this: SVGPathElement) { return this.getTotalLength(); });
+            if (d.isUser) {
+              pathEl.style("filter", "drop-shadow(0 0 4px rgba(34,211,238,0.8))");
+            }
 
-               if (d.isUser) {
-                   pathEl.style("filter", "drop-shadow(0 0 4px rgba(34,211,238,0.8))"); // Glow for user
-               }
-
-               pathEl.transition()
-                   .duration(d.isUser ? 2000 : 1000) // Slower animation for user
-                   .ease(d3.easeCubicOut)
-                   .attr("stroke-dashoffset", 0)
-                   .on("end", () => triggerRipple());
+            pathEl.transition()
+              .duration(d.isUser ? 2000 : 1000)
+              .ease(d3.easeCubicOut)
+              .attr("stroke-dashoffset", 0)
+              .on("end", () => triggerRipple());
           }
-      });
+        });
+      }
 
-      // Update paths based on projection (for rotation)
-      if (viewMode === 'GLOBE' && isPlayingRef.current) {
+      // Update paths
+      if ((viewMode === 'GLOBE' && isPlayingRef.current)) {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         globeGroup.selectAll("path").attr("d", path as any);
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -274,24 +394,27 @@ export const GuestMapSlide: React.FC<GuestMapSlideProps> = ({ data, viewMode, is
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         markersGroup.selectAll("path").attr("d", path as any);
 
-        // Update ripple center if rotating
         const center = projection(data.homeCoordinates as [number, number]);
         if (center) {
-            ripple.attr("cx", center[0]).attr("cy", center[1]);
+          ripple.attr("cx", center[0]).attr("cy", center[1]);
         }
       }
 
       // Sync Ticker UI
-      const tickerEls = document.querySelectorAll('.month-ticker-item');
-      tickerEls.forEach((el, idx) => {
+      if (viewMode !== 'LOCAL') {
+        const monthDuration = 800;
+        const currentMonth = Math.floor((elapsed % (12 * monthDuration)) / monthDuration);
+        const tickerEls = document.querySelectorAll('.month-ticker-item');
+        tickerEls.forEach((el, idx) => {
           if (idx === currentMonth) {
-              el.classList.add('text-white', 'scale-125', 'font-bold');
-              el.classList.remove('text-white/30', 'scale-100', 'font-normal');
+            el.classList.add('text-white', 'scale-125', 'font-bold');
+            el.classList.remove('text-white/30', 'scale-100', 'font-normal');
           } else {
-              el.classList.remove('text-white', 'scale-125', 'font-bold');
-              el.classList.add('text-white/30', 'scale-100', 'font-normal');
+            el.classList.remove('text-white', 'scale-125', 'font-bold');
+            el.classList.add('text-white/30', 'scale-100', 'font-normal');
           }
-      });
+        });
+      }
 
     });
 
@@ -299,47 +422,84 @@ export const GuestMapSlide: React.FC<GuestMapSlideProps> = ({ data, viewMode, is
       timer.stop();
     };
 
-  }, [worldData, data, viewMode, audience]);
+  }, [worldData, data, viewMode, audience, localPoints]);
 
   return (
-    <div className="flex flex-col h-full pt-16 px-6 relative overflow-hidden">
+    <div className={`flex flex-col h-full ${hideHeader ? '' : 'pt-16 px-6'} relative overflow-hidden ${className}`}>
+
+      {/* LOCAL MODE BACKGROUND IMAGE LAYER */}
+      {viewMode === 'LOCAL' && (
+        <div className="absolute inset-0 z-0">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <div
+            className="absolute inset-0 bg-cover bg-center"
+            style={{
+              backgroundImage: 'url("https://images.unsplash.com/photo-1569336415962-a4bd9f69cd83?q=80&w=2689&auto=format&fit=crop")',
+              transform: 'scale(1.1)',
+              filter: 'invert(1) grayscale(1) contrast(1.2)'
+            }}
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent"></div>
+        </div>
+      )}
 
       {/* Header */}
-      <div className="flex flex-col items-center mb-4 z-20 animate-fade-in relative pointer-events-none">
-        <div className="bg-white/10 px-4 py-1.5 rounded-full border border-white/20 mb-6 backdrop-blur-md shadow-lg">
-          <span className="text-[10px] font-bold font-sans tracking-[0.2em] uppercase text-white">
-            {audience === 'HOSTAI' ? 'Global Network' : 'Global Reach'}
-          </span>
+      {!hideHeader && (
+        <div className="flex flex-col items-center mb-4 z-20 animate-fade-in relative pointer-events-none">
+          <div className="bg-white/10 px-4 py-1.5 rounded-full border border-white/20 mb-6 backdrop-blur-md shadow-lg">
+            <span className="text-[10px] font-bold font-sans tracking-[0.2em] uppercase text-white">
+              {audience === 'HOSTAI' ? 'Global Network' : (viewMode === 'LOCAL' ? 'Neighborhood' : 'Global Reach')}
+            </span>
+          </div>
+          <h2 className="text-4xl md:text-5xl font-serif font-bold text-center leading-tight drop-shadow-md whitespace-pre-line">
+            {viewMode === 'LOCAL' ? 'Local Impact \n & Vibe.' : (audience === 'HOSTAI' ? 'Connecting \n the world.' : 'The world came \n to stay.')}
+          </h2>
         </div>
-        <h2 className="text-4xl md:text-5xl font-serif font-bold text-center leading-tight drop-shadow-md whitespace-pre-line">
-           {audience === 'HOSTAI' ? 'Connecting \n the world.' : 'The world came \n to stay.'}
-        </h2>
-      </div>
+      )}
 
       {/* Map Container */}
       <div ref={containerRef} className="flex-1 w-full relative flex items-center justify-center z-10">
-         {loading && (
-             <div className="absolute text-white/50 animate-pulse font-mono text-xs tracking-widest uppercase">
-                 Calibrating Geodata...
-             </div>
-         )}
-         <svg ref={svgRef} className="w-full h-full drop-shadow-2xl" />
+        {loading && viewMode !== 'LOCAL' && (
+          <div className="absolute text-white/50 animate-pulse font-mono text-xs tracking-widest uppercase">
+            Calibrating Geodata...
+          </div>
+        )}
+        <svg ref={svgRef} className="w-full h-full drop-shadow-2xl" />
+
+        {/* Local Legend Overlay */}
+        {viewMode === 'LOCAL' && !loading && !hideHeader && (
+          <div className="absolute bottom-4 right-4 bg-black/40 backdrop-blur-md p-3 rounded-xl border border-white/10 text-[10px] font-mono animate-fade-in">
+            <div className="flex items-center gap-2 mb-1">
+              <div className="w-2 h-2 rounded-full bg-[#ef4444]"></div>
+              <span className="text-white/70">YOU</span>
+            </div>
+            <div className="flex items-center gap-2 mb-1">
+              <div className="w-2 h-2 rounded-full bg-[#fbbf24]"></div>
+              <span className="text-white/70">COFFEE</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-2 h-2 rounded-full bg-[#22d3ee]"></div>
+              <span className="text-white/70">BUSINESS</span>
+            </div>
+          </div>
+        )}
       </div>
 
-      {/* Month Ticker */}
-      <div className="mb-24 z-20 relative w-full overflow-hidden">
-        <div className="flex justify-between px-2">
+      {/* Month Ticker (Hidden in LOCAL) */}
+      {!hideHeader && (
+        <div className={`mb-24 z-20 relative w-full overflow-hidden transition-opacity duration-500 ${viewMode === 'LOCAL' ? 'opacity-0' : 'opacity-100'}`}>
+          <div className="flex justify-between px-2">
             {MAP_CONSTANTS.months.map((m) => (
-                <div key={m} className="month-ticker-item text-[8px] md:text-[10px] font-mono tracking-widest text-white/30 transition-all duration-300">
-                    {m}
-                </div>
+              <div key={m} className="month-ticker-item text-[8px] md:text-[10px] font-mono tracking-widest text-white/30 transition-all duration-300">
+                {m}
+              </div>
             ))}
+          </div>
+          <div className="w-full h-[1px] bg-white/10 mt-2 relative">
+            <div className="absolute top-0 left-0 h-full bg-amber-400/50 w-full animate-progress-linear origin-left scale-x-0" style={{ animationDuration: '10s' }}></div>
+          </div>
         </div>
-        {/* Progress line */}
-        <div className="w-full h-[1px] bg-white/10 mt-2 relative">
-             <div className="absolute top-0 left-0 h-full bg-amber-400/50 w-full animate-progress-linear origin-left scale-x-0" style={{ animationDuration: '10s' }}></div>
-        </div>
-      </div>
+      )}
 
     </div>
   );
