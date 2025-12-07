@@ -30,11 +30,11 @@ export const StoryLayout: React.FC<StoryLayoutProps> = ({
         {backgroundImage && (
             <>
                 <div
-                    className="absolute inset-0 z-0 bg-cover bg-center animate-ken-burns opacity-60"
+                    className="absolute inset-0 z-0 bg-cover bg-center animate-ken-burns opacity-40"
                     style={{ backgroundImage: `url(${backgroundImage})` }}
                 />
                 {/* Gradient Overlay for Text Readability */}
-                <div className="absolute inset-0 z-0 bg-gradient-to-b from-black/40 via-transparent to-black/80 mix-blend-multiply" />
+                <div className="absolute inset-0 z-0 bg-gradient-to-b from-black/50 via-black/30 to-black/70" />
             </>
         )}
 
