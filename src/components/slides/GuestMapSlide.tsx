@@ -124,10 +124,10 @@ export const GuestMapSlide: React.FC<GuestMapSlideProps> = ({
         .clipAngle(90)
         .rotate(rotationRef.current);
     } else if (viewMode === 'MAP') {
-      projection = d3.geoEquirectangular()
-        .scale(width / 6.5)
-        .translate([width / 2, height / 2])
-        .rotate([-10, 0, 0]);
+      // US-focused map view using Albers USA projection
+      projection = d3.geoAlbersUsa()
+        .scale(width * 1.3)
+        .translate([width / 2, height / 2]);
     } else { // LOCAL
       projection = d3.geoMercator()
         .center(data.homeCoordinates as [number, number])
@@ -379,28 +379,68 @@ export const GuestMapSlide: React.FC<GuestMapSlideProps> = ({
           const shouldLaunch = d.launchMonth <= currentMonth;
           if (shouldLaunch && !drawnArcs.has(i)) {
             drawnArcs.add(i);
-            const pathEl = arcGroup.append("path")
-              .datum(d)
-              .attr("class", "arc")
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              .attr("d", path as any)
-              .attr("fill", "none")
-              .attr("stroke", d.isUser ? MAP_CONSTANTS.colors.userArc : MAP_CONSTANTS.colors.arc)
-              .attr("stroke-width", d.isUser ? 3 : 1.5)
-              .attr("stroke-linecap", "round")
-              .attr("stroke-opacity", d.isUser ? 1 : 0.8)
-              .attr("stroke-dasharray", function (this: SVGPathElement) { return this.getTotalLength() + " " + this.getTotalLength(); })
-              .attr("stroke-dashoffset", function (this: SVGPathElement) { return this.getTotalLength(); });
 
-            if (d.isUser) {
+            let pathEl;
+
+            // For MAP view (AlbersUSA), use quadratic bezier curves instead of geodesic paths
+            if (viewMode === 'MAP') {
+              const start = projection(d.coordinates[0] as [number, number]);
+              const end = projection(d.coordinates[1] as [number, number]);
+
+              // Skip if either point is outside the projection (returns null)
+              if (!start || !end) return;
+
+              // Calculate control point for curved arc (apex above the midpoint)
+              const midX = (start[0] + end[0]) / 2;
+              const midY = (start[1] + end[1]) / 2;
+              const dx = end[0] - start[0];
+              const dy = end[1] - start[1];
+              const dist = Math.sqrt(dx * dx + dy * dy);
+              // Arc height proportional to distance
+              const arcHeight = Math.min(dist * 0.3, 80);
+              // Control point perpendicular to the line, above it
+              const controlX = midX;
+              const controlY = midY - arcHeight;
+
+              const arcPath = `M ${start[0]},${start[1]} Q ${controlX},${controlY} ${end[0]},${end[1]}`;
+
+              pathEl = arcGroup.append("path")
+                .attr("class", "arc")
+                .attr("d", arcPath)
+                .attr("fill", "none")
+                .attr("stroke", d.isUser ? MAP_CONSTANTS.colors.userArc : MAP_CONSTANTS.colors.arc)
+                .attr("stroke-width", d.isUser ? 3 : 1.5)
+                .attr("stroke-linecap", "round")
+                .attr("stroke-opacity", d.isUser ? 1 : 0.8)
+                .attr("stroke-dasharray", function (this: SVGPathElement) { return this.getTotalLength() + " " + this.getTotalLength(); })
+                .attr("stroke-dashoffset", function (this: SVGPathElement) { return this.getTotalLength(); });
+            } else {
+              // For GLOBE view, use geodesic paths
+              pathEl = arcGroup.append("path")
+                .datum(d)
+                .attr("class", "arc")
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                .attr("d", path as any)
+                .attr("fill", "none")
+                .attr("stroke", d.isUser ? MAP_CONSTANTS.colors.userArc : MAP_CONSTANTS.colors.arc)
+                .attr("stroke-width", d.isUser ? 3 : 1.5)
+                .attr("stroke-linecap", "round")
+                .attr("stroke-opacity", d.isUser ? 1 : 0.8)
+                .attr("stroke-dasharray", function (this: SVGPathElement) { return this.getTotalLength() + " " + this.getTotalLength(); })
+                .attr("stroke-dashoffset", function (this: SVGPathElement) { return this.getTotalLength(); });
+            }
+
+            if (d.isUser && pathEl) {
               pathEl.style("filter", "drop-shadow(0 0 4px rgba(34,211,238,0.8))");
             }
 
-            pathEl.transition()
-              .duration(d.isUser ? 2000 : 1000)
-              .ease(d3.easeCubicOut)
-              .attr("stroke-dashoffset", 0)
-              .on("end", () => triggerRipple());
+            if (pathEl) {
+              pathEl.transition()
+                .duration(d.isUser ? 2000 : 1000)
+                .ease(d3.easeCubicOut)
+                .attr("stroke-dashoffset", 0)
+                .on("end", () => triggerRipple());
+            }
           }
         });
       }

@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { Audience, HostData } from '@/lib/types';
-import { typography } from '@/lib/design-system';
+import { typography, formatMoney, formatNumber } from '@/lib/design-system';
 
 interface OutroSlideProps {
   audience: Audience;
@@ -10,36 +10,30 @@ interface OutroSlideProps {
 }
 
 const getContent = (audience: Audience, data: HostData): { title: string; subtitle: string; summary: string } => {
-  const formatMoney = (n: number) => {
-    if (n >= 1000000) return `$${(n / 1000000).toFixed(1)}M`;
-    if (n >= 1000) return `$${(n / 1000).toFixed(0)}k`;
-    return `$${n}`;
-  };
-
   switch (audience) {
     case 'GUEST':
       return {
         title: "Until\nnext time.",
         subtitle: "Thanks for being part of our story.",
-        summary: `You were one of <strong>${data.totalGuests.toLocaleString()} guests</strong> who made this year unforgettable. Together, we contributed <strong>${formatMoney(data.economicImpact)}</strong> to local businesses. We can't wait to welcome you back.`
+        summary: `You were one of <strong>${formatNumber(data.totalGuests)} guests</strong> who made this year unforgettable. Together, we contributed <strong>${formatMoney(data.economicImpact)}</strong> to local businesses. We can't wait to welcome you back.`
       };
     case 'STAFF':
       return {
         title: "Thank\nyou.",
         subtitle: "You're the reason it all works.",
-        summary: `Your <strong>${data.cleaningHours.toLocaleString()} hours</strong> of hard work delivered <strong>${data.fiveStarReviewsEarned} 5-star reviews</strong> and served <strong>${data.totalGuests.toLocaleString()} guests</strong>. You cleaned <strong>${data.sheetsCleaned.toLocaleString()} sheets</strong> and made every stay feel like home.`
+        summary: `Your <strong>${formatNumber(data.cleaningHours)} hours</strong> of hard work delivered <strong>${data.fiveStarReviewsEarned} 5-star reviews</strong> and served <strong>${formatNumber(data.totalGuests)} guests</strong>. You cleaned <strong>${formatNumber(data.sheetsCleaned)} sheets</strong> and made every stay feel like home.`
       };
     case 'HOSTAI':
       return {
         title: "Onward.",
         subtitle: "The future of hospitality is here.",
-        summary: `We powered over <strong>${(data.totalPropertiesManaged / 1000).toFixed(0)}k properties</strong> this year, processing <strong>${formatMoney(data.platformGlobalRevenue)}</strong> in value and handling <strong>${(data.aiConversationsHandled / 1000000).toFixed(1)}M conversations</strong>.`
+        summary: `We powered over <strong>${formatNumber(data.totalPropertiesManaged)} properties</strong> this year, processing <strong>${formatMoney(data.platformGlobalRevenue)}</strong> in value and handling <strong>${formatNumber(data.aiConversationsHandled)} conversations</strong>.`
       };
     default:
       return {
         title: "That's\na wrap.",
         subtitle: "Here's to another great year ahead.",
-        summary: `You welcomed <strong>${data.totalGuests.toLocaleString()} guests</strong>, maintained <strong>${data.occupancyRate}% occupancy</strong>, increased direct bookings by <strong>${data.directBookingIncrease}%</strong>, earned <strong>${data.fiveStarReviewsEarned} 5-star reviews</strong>, and contributed an estimated <strong>${formatMoney(data.economicImpact)}</strong> to the local economy. Well done!`
+        summary: `You welcomed <strong>${formatNumber(data.totalGuests)} guests</strong>, maintained <strong>${data.occupancyRate}% occupancy</strong>, increased direct bookings by <strong>${data.directBookingIncrease}%</strong>, earned <strong>${data.fiveStarReviewsEarned} 5-star reviews</strong>, and contributed an estimated <strong>${formatMoney(data.economicImpact)}</strong> to the local economy. Well done!`
       };
   }
 };

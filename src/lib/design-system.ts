@@ -129,3 +129,38 @@ export const spacing = {
   grid: 'gap-4',
   inline: 'gap-2',
 } as const;
+
+/**
+ * NUMBER FORMATTERS
+ * =================
+ *
+ * Intelligent number formatting for display:
+ * - Numbers >= 1M display as "2.1M"
+ * - Numbers >= 1K display as "824K"
+ * - Numbers < 1K display with commas
+ *
+ * USAGE:
+ *   formatNumber(2100000)     → "2.1M"
+ *   formatNumber(824000)      → "824K"
+ *   formatNumber(756)         → "756"
+ *   formatMoney(2100000)      → "$2.1M"
+ *   formatMoney(824000)       → "$824K"
+ */
+
+export const formatNumber = (n: number): string => {
+  if (n >= 1000000) {
+    const millions = n / 1000000;
+    // Show decimal only if meaningful (e.g., 2.1M not 2.0M)
+    return millions % 1 === 0 ? `${millions}M` : `${millions.toFixed(1)}M`;
+  }
+  if (n >= 1000) {
+    const thousands = n / 1000;
+    // Show decimal for values like 10.5K, but not for clean numbers like 824K
+    return thousands % 1 === 0 ? `${thousands}K` : `${thousands.toFixed(1)}K`;
+  }
+  return n.toLocaleString();
+};
+
+export const formatMoney = (n: number): string => {
+  return `$${formatNumber(n)}`;
+};

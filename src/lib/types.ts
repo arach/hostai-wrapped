@@ -304,6 +304,9 @@ export interface HostData {
 
   // Local neighborhood highlights (coffee shops, restaurants, etc.)
   localPoints?: LocalPoint[];
+
+  // Map visualization preference - 'GLOBE' for international, 'MAP' for domestic-heavy
+  preferredMapView?: 'GLOBE' | 'MAP';
 }
 
 export enum SlideType {

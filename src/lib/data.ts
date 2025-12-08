@@ -147,7 +147,8 @@ export const mockHostData: HostData = {
     { coordinates: [-77.0512, 38.9023], type: 'restaurant', name: 'Commissary DC' },
     { coordinates: [-77.0334, 38.9134], type: 'business', name: 'Union Market' },
     { coordinates: [-77.0456, 38.8987], type: 'restaurant', name: 'The Smith' },
-  ]
+  ],
+  preferredMapView: 'GLOBE', // International travelers
 };
 
 // Additional sample hosts with unique data
@@ -220,7 +221,8 @@ const coastalRetreatsData: HostData = {
     { coordinates: [-80.1320, 25.7895], type: 'restaurant', name: 'Joe\'s Stone Crab' },
     { coordinates: [-80.1298, 25.7932], type: 'restaurant', name: 'Juvia' },
     { coordinates: [-80.1265, 25.7880], type: 'business', name: 'Lincoln Road Mall' },
-  ]
+  ],
+  preferredMapView: 'GLOBE', // International beach destination
 };
 
 const mountainViewData: HostData = {
@@ -258,8 +260,16 @@ const mountainViewData: HostData = {
     { city: "San Francisco", country: "USA", count: 58, coordinates: [-122.4194, 37.7749] },
     { city: "Phoenix", country: "USA", count: 42, coordinates: [-112.0740, 33.4484] },
     { city: "Seattle", country: "USA", count: 35, coordinates: [-122.3321, 47.6062] },
-    { city: "London", country: "UK", count: 28, coordinates: [-0.1276, 51.5074] },
+    { city: "New York", country: "USA", count: 52, coordinates: [-74.0060, 40.7128] },
+    { city: "Chicago", country: "USA", count: 45, coordinates: [-87.6298, 41.8781] },
+    { city: "Austin", country: "USA", count: 32, coordinates: [-97.7431, 30.2672] },
+    { city: "Miami", country: "USA", count: 28, coordinates: [-80.1918, 25.7617] },
+    { city: "Atlanta", country: "USA", count: 25, coordinates: [-84.3880, 33.7490] },
+    { city: "Boston", country: "USA", count: 22, coordinates: [-71.0589, 42.3601] },
+    { city: "Portland", country: "USA", count: 18, coordinates: [-122.6765, 45.5231] },
+    { city: "Salt Lake City", country: "USA", count: 38, coordinates: [-111.8910, 40.7608] },
   ],
+  preferredMapView: 'MAP', // Domestic-heavy ski resort
   topSearchTerm: "ski-in ski-out chalets",
   busiestDate: "December 26",
   biggestBooking: {
@@ -366,7 +376,8 @@ const urbanNestData: HostData = {
     { coordinates: [-73.9535, 40.7198], type: 'restaurant', name: 'Peter Luger' },
     { coordinates: [-73.9590, 40.7175], type: 'business', name: 'Brooklyn Flea' },
     { coordinates: [-73.9625, 40.7142], type: 'business', name: 'Smorgasburg' },
-  ]
+  ],
+  preferredMapView: 'GLOBE', // Major international city
 };
 
 // Build the hosts data map keyed by hash

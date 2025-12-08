@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { HostData, Audience } from '@/lib/types';
-import { typography } from '@/lib/design-system';
+import { typography, formatMoney, formatNumber } from '@/lib/design-system';
 import { GuestMapSlide } from './GuestMapSlide';
 
 interface StatsSlideProps {
@@ -35,11 +35,11 @@ export const StatsSlide: React.FC<StatsSlideProps> = ({ data, audience }) => {
       {/* Big Revenue Number */}
       <div className="relative z-10 animate-slide-up">
         <div className={`text-5xl font-bold tracking-tight text-white`}>
-          ${(data.totalRevenue / 1000).toFixed(0)}k
+          {formatMoney(data.totalRevenue)}
         </div>
         <div className={typography.sublabel}>Total Revenue</div>
         <div className="mt-2 text-emerald-400 text-sm font-medium">
-          You saved ${(data.otaSavings / 1000).toFixed(0)}k in OTA fees
+          You saved {formatMoney(data.otaSavings)} in OTA fees
         </div>
       </div>
 
@@ -87,7 +87,7 @@ export const StatsSlide: React.FC<StatsSlideProps> = ({ data, audience }) => {
           </div>
 
           <div className="p-4">
-            <div className={typography.stat}>{(data.websiteVisits / 1000).toFixed(1)}k</div>
+            <div className={typography.stat}>{formatNumber(data.websiteVisits)}</div>
             <div className={typography.sublabel}>Site Visits</div>
           </div>
         </div>
@@ -197,7 +197,7 @@ export const StatsSlide: React.FC<StatsSlideProps> = ({ data, audience }) => {
           Network Scale
         </div>
         <h2 className={`${typography.hero} mb-4 text-white pt-1`}>
-          ${(data.platformGlobalRevenue / 1000000).toFixed(0)}M
+          {formatMoney(data.platformGlobalRevenue)}
         </h2>
         <p className={`${typography.body} text-white/60 mb-8`}>
           Total Booking Value Processed
@@ -208,7 +208,7 @@ export const StatsSlide: React.FC<StatsSlideProps> = ({ data, audience }) => {
            {/* AI Conversations */}
            <div className="bg-white/5 p-5 rounded-2xl border border-white/10 backdrop-blur-sm col-span-2">
               <div className={`${typography.title} mb-1 text-blue-400`}>
-                {(data.aiConversationsHandled / 1000000).toFixed(1)}M
+                {formatNumber(data.aiConversationsHandled)}
               </div>
               <div className={typography.sublabel}>AI Conversations Handled</div>
               <div className="w-full h-1 bg-white/10 mt-3 rounded-full overflow-hidden">
@@ -218,7 +218,7 @@ export const StatsSlide: React.FC<StatsSlideProps> = ({ data, audience }) => {
 
            {/* Properties */}
            <div className="bg-white/5 p-5 rounded-2xl border border-white/10 backdrop-blur-sm">
-              <div className={`${typography.stat} mb-1`}>{(data.totalPropertiesManaged / 1000).toFixed(1)}k</div>
+              <div className={`${typography.stat} mb-1`}>{formatNumber(data.totalPropertiesManaged)}</div>
               <div className={typography.sublabel}>Properties Managed</div>
            </div>
 

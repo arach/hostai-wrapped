@@ -59,7 +59,7 @@ function HomeContent() {
   const [isPaused, setIsPaused] = useState(false);
   const [showControls, setShowControls] = useState(true);
 
-  // Map Controls State
+  // Map Controls State - initialized from host preference
   const [mapViewMode, setMapViewMode] = useState<'GLOBE' | 'MAP' | 'LOCAL'>('GLOBE');
   const [isMapPlaying, setIsMapPlaying] = useState(true);
 
@@ -69,6 +69,13 @@ function HomeContent() {
   const selectedHost = activeHosts[selectedHostIndex] || SAMPLE_HOST_UUIDS[0];
   const selectedHostHash = hashHostId(selectedHost.uuid);
   const hostData = getHostDataByHash(selectedHostHash);
+
+  // Update map view when host changes based on their preference
+  useEffect(() => {
+    if (hostData.preferredMapView) {
+      setMapViewMode(hostData.preferredMapView);
+    }
+  }, [hostData.preferredMapView]);
 
   // Slide toggles - all enabled by default
   const [enabledSlides, setEnabledSlides] = useState<Record<SlideType, boolean>>({
