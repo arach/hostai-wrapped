@@ -1,4 +1,8 @@
 import { HostData } from './types';
+import { hashHostId } from './hash';
+
+// Sample host data keyed by hash
+export const sampleHostsData: Record<string, HostData> = {};
 
 export const mockHostData: HostData = {
   hostName: "Horizon Stays",
@@ -144,4 +148,241 @@ export const mockHostData: HostData = {
     { coordinates: [-77.0334, 38.9134], type: 'business', name: 'Union Market' },
     { coordinates: [-77.0456, 38.8987], type: 'restaurant', name: 'The Smith' },
   ]
+};
+
+// Additional sample hosts with unique data
+const coastalRetreatsData: HostData = {
+  hostName: "Coastal Retreats",
+  year: 2025,
+  totalGuests: 1234,
+  totalNights: 45000,
+  totalRevenue: 1250000,
+  otaSavings: 195000,
+  directBookingIncrease: 35,
+  occupancyRate: 91,
+  websiteVisits: 25000,
+  sheetsCleaned: 4500,
+  toiletriesRestocked: 2100,
+  batteriesReplaced: 95,
+  economicImpact: 2100000,
+  guestSavings: 280,
+  totalDistanceTraveled: 2500000,
+  cleaningHours: 3200,
+  fiveStarReviewsEarned: 245,
+  maintenanceResolved: 412,
+  localBusinessesSupported: 38,
+  communityCoffeeCount: 5200,
+  guestConversationsHandled: 8500,
+  platformGlobalRevenue: 520000000,
+  aiConversationsHandled: 3200000,
+  totalPropertiesManaged: 14800,
+  homeCoordinates: [-80.1300, 25.7907], // Miami Beach
+  userOrigin: { city: "Chicago", coordinates: [-87.6298, 41.8781] },
+  topGuestOrigins: [
+    { city: "New York", country: "USA", count: 180, coordinates: [-74.0060, 40.7128] },
+    { city: "Chicago", country: "USA", count: 145, coordinates: [-87.6298, 41.8781] },
+    { city: "Toronto", country: "Canada", count: 98, coordinates: [-79.3832, 43.6532] },
+    { city: "London", country: "UK", count: 76, coordinates: [-0.1276, 51.5074] },
+    { city: "São Paulo", country: "Brazil", count: 65, coordinates: [-46.6333, -23.5505] },
+    { city: "Mexico City", country: "Mexico", count: 52, coordinates: [-99.1332, 19.4326] },
+    { city: "Buenos Aires", country: "Argentina", count: 41, coordinates: [-58.3816, -34.6037] },
+    { city: "Atlanta", country: "USA", count: 89, coordinates: [-84.3880, 33.7490] },
+  ],
+  topSearchTerm: "beachfront luxury condos",
+  busiestDate: "March 15",
+  biggestBooking: {
+    amount: 48000,
+    nights: 28,
+    property: "Oceanfront Penthouse"
+  },
+  monthlyOccupancy: [
+    { month: 'Jan', occupancy: 95, revenue: 125000 },
+    { month: 'Feb', occupancy: 98, revenue: 135000 },
+    { month: 'Mar', occupancy: 99, revenue: 145000 },
+    { month: 'Apr', occupancy: 92, revenue: 115000 },
+    { month: 'May', occupancy: 85, revenue: 95000 },
+    { month: 'Jun', occupancy: 78, revenue: 85000 },
+    { month: 'Jul', occupancy: 82, revenue: 90000 },
+    { month: 'Aug', occupancy: 75, revenue: 80000 },
+    { month: 'Sep', occupancy: 70, revenue: 75000 },
+    { month: 'Oct', occupancy: 80, revenue: 88000 },
+    { month: 'Nov', occupancy: 88, revenue: 100000 },
+    { month: 'Dec', occupancy: 96, revenue: 130000 },
+  ],
+  spotlightReview: {
+    guest: "Sarah Chen",
+    text: "Woke up to dolphins swimming past my balcony. This place is pure magic!",
+    rating: 5,
+    property: "Sunrise Bay Villa"
+  },
+  localPoints: [
+    { coordinates: [-80.1285, 25.7917], type: 'coffee', name: 'Panther Coffee' },
+    { coordinates: [-80.1320, 25.7895], type: 'restaurant', name: 'Joe\'s Stone Crab' },
+    { coordinates: [-80.1298, 25.7932], type: 'restaurant', name: 'Juvia' },
+    { coordinates: [-80.1265, 25.7880], type: 'business', name: 'Lincoln Road Mall' },
+  ]
+};
+
+const mountainViewData: HostData = {
+  hostName: "Mountain View Rentals",
+  year: 2025,
+  totalGuests: 542,
+  totalNights: 32000,
+  totalRevenue: 2100000,
+  otaSavings: 320000,
+  directBookingIncrease: 42,
+  occupancyRate: 78,
+  websiteVisits: 18500,
+  sheetsCleaned: 2800,
+  toiletriesRestocked: 1650,
+  batteriesReplaced: 145,
+  economicImpact: 3500000,
+  guestSavings: 450,
+  totalDistanceTraveled: 1850000,
+  cleaningHours: 2400,
+  fiveStarReviewsEarned: 178,
+  maintenanceResolved: 285,
+  localBusinessesSupported: 28,
+  communityCoffeeCount: 3800,
+  guestConversationsHandled: 5200,
+  platformGlobalRevenue: 520000000,
+  aiConversationsHandled: 3200000,
+  totalPropertiesManaged: 14800,
+  homeCoordinates: [-106.8175, 39.1911], // Aspen
+  userOrigin: { city: "Denver", coordinates: [-104.9903, 39.7392] },
+  topGuestOrigins: [
+    { city: "Denver", country: "USA", count: 120, coordinates: [-104.9903, 39.7392] },
+    { city: "Los Angeles", country: "USA", count: 95, coordinates: [-118.2437, 34.0522] },
+    { city: "Dallas", country: "USA", count: 78, coordinates: [-96.7970, 32.7767] },
+    { city: "Houston", country: "USA", count: 65, coordinates: [-95.3698, 29.7604] },
+    { city: "San Francisco", country: "USA", count: 58, coordinates: [-122.4194, 37.7749] },
+    { city: "Phoenix", country: "USA", count: 42, coordinates: [-112.0740, 33.4484] },
+    { city: "Seattle", country: "USA", count: 35, coordinates: [-122.3321, 47.6062] },
+    { city: "London", country: "UK", count: 28, coordinates: [-0.1276, 51.5074] },
+  ],
+  topSearchTerm: "ski-in ski-out chalets",
+  busiestDate: "December 26",
+  biggestBooking: {
+    amount: 85000,
+    nights: 14,
+    property: "Grand Summit Lodge"
+  },
+  monthlyOccupancy: [
+    { month: 'Jan', occupancy: 95, revenue: 280000 },
+    { month: 'Feb', occupancy: 92, revenue: 265000 },
+    { month: 'Mar', occupancy: 85, revenue: 220000 },
+    { month: 'Apr', occupancy: 45, revenue: 80000 },
+    { month: 'May', occupancy: 35, revenue: 65000 },
+    { month: 'Jun', occupancy: 68, revenue: 120000 },
+    { month: 'Jul', occupancy: 82, revenue: 145000 },
+    { month: 'Aug', occupancy: 78, revenue: 135000 },
+    { month: 'Sep', occupancy: 55, revenue: 95000 },
+    { month: 'Oct', occupancy: 42, revenue: 75000 },
+    { month: 'Nov', occupancy: 65, revenue: 140000 },
+    { month: 'Dec', occupancy: 98, revenue: 320000 },
+  ],
+  spotlightReview: {
+    guest: "James Morrison",
+    text: "Best ski vacation ever. The hot tub overlooking the slopes was absolutely unreal.",
+    rating: 5,
+    property: "Powder Ridge Chalet"
+  },
+  localPoints: [
+    { coordinates: [-106.8200, 39.1875], type: 'coffee', name: 'Victoria Espresso' },
+    { coordinates: [-106.8155, 39.1925], type: 'restaurant', name: 'Matsuhisa' },
+    { coordinates: [-106.8190, 39.1895], type: 'restaurant', name: 'Ajax Tavern' },
+    { coordinates: [-106.8165, 39.1880], type: 'business', name: 'Aspen Mountain' },
+  ]
+};
+
+const urbanNestData: HostData = {
+  hostName: "Urban Nest Collective",
+  year: 2025,
+  totalGuests: 2100,
+  totalNights: 52000,
+  totalRevenue: 980000,
+  otaSavings: 165000,
+  directBookingIncrease: 31,
+  occupancyRate: 88,
+  websiteVisits: 32000,
+  sheetsCleaned: 5200,
+  toiletriesRestocked: 2800,
+  batteriesReplaced: 110,
+  economicImpact: 1650000,
+  guestSavings: 195,
+  totalDistanceTraveled: 3200000,
+  cleaningHours: 4100,
+  fiveStarReviewsEarned: 312,
+  maintenanceResolved: 520,
+  localBusinessesSupported: 52,
+  communityCoffeeCount: 8500,
+  guestConversationsHandled: 12400,
+  platformGlobalRevenue: 520000000,
+  aiConversationsHandled: 3200000,
+  totalPropertiesManaged: 14800,
+  homeCoordinates: [-73.9442, 40.6782], // Brooklyn
+  userOrigin: { city: "Boston", coordinates: [-71.0589, 42.3601] },
+  topGuestOrigins: [
+    { city: "Boston", country: "USA", count: 245, coordinates: [-71.0589, 42.3601] },
+    { city: "Philadelphia", country: "USA", count: 198, coordinates: [-75.1652, 39.9526] },
+    { city: "Washington DC", country: "USA", count: 165, coordinates: [-77.0369, 38.9072] },
+    { city: "London", country: "UK", count: 142, coordinates: [-0.1276, 51.5074] },
+    { city: "Paris", country: "France", count: 98, coordinates: [2.3522, 48.8566] },
+    { city: "Toronto", country: "Canada", count: 85, coordinates: [-79.3832, 43.6532] },
+    { city: "Los Angeles", country: "USA", count: 72, coordinates: [-118.2437, 34.0522] },
+    { city: "Berlin", country: "Germany", count: 58, coordinates: [13.4050, 52.5200] },
+  ],
+  topSearchTerm: "brooklyn lofts with rooftop",
+  busiestDate: "October 31",
+  biggestBooking: {
+    amount: 28500,
+    nights: 45,
+    property: "Williamsburg Artist Loft"
+  },
+  monthlyOccupancy: [
+    { month: 'Jan', occupancy: 72, revenue: 65000 },
+    { month: 'Feb', occupancy: 75, revenue: 68000 },
+    { month: 'Mar', occupancy: 82, revenue: 75000 },
+    { month: 'Apr', occupancy: 88, revenue: 82000 },
+    { month: 'May', occupancy: 92, revenue: 88000 },
+    { month: 'Jun', occupancy: 95, revenue: 92000 },
+    { month: 'Jul', occupancy: 90, revenue: 86000 },
+    { month: 'Aug', occupancy: 88, revenue: 84000 },
+    { month: 'Sep', occupancy: 94, revenue: 90000 },
+    { month: 'Oct', occupancy: 98, revenue: 95000 },
+    { month: 'Nov', occupancy: 85, revenue: 78000 },
+    { month: 'Dec', occupancy: 78, revenue: 72000 },
+  ],
+  spotlightReview: {
+    guest: "Emma Rodriguez",
+    text: "The neighborhood recommendations were perfect. Found my new favorite coffee shop!",
+    rating: 5,
+    property: "DUMBO Waterfront Studio"
+  },
+  localPoints: [
+    { coordinates: [-73.9560, 40.7214], type: 'coffee', name: 'Devoción' },
+    { coordinates: [-73.9612, 40.7156], type: 'coffee', name: 'Blue Bottle' },
+    { coordinates: [-73.9485, 40.6892], type: 'restaurant', name: 'Juliana\'s Pizza' },
+    { coordinates: [-73.9535, 40.7198], type: 'restaurant', name: 'Peter Luger' },
+    { coordinates: [-73.9590, 40.7175], type: 'business', name: 'Brooklyn Flea' },
+    { coordinates: [-73.9625, 40.7142], type: 'business', name: 'Smorgasburg' },
+  ]
+};
+
+// Build the hosts data map keyed by hash
+const hostConfigs = [
+  { uuid: '550e8400-e29b-41d4-a716-446655440000', data: mockHostData },
+  { uuid: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890', data: coastalRetreatsData },
+  { uuid: 'b2c3d4e5-f6a7-8901-bcde-f12345678901', data: mountainViewData },
+  { uuid: 'c3d4e5f6-a7b8-9012-cdef-123456789012', data: urbanNestData },
+];
+
+hostConfigs.forEach(({ uuid, data }) => {
+  const hash = hashHostId(uuid);
+  sampleHostsData[hash] = data;
+});
+
+// Helper function to get host data by hash
+export const getHostDataByHash = (hash: string): HostData => {
+  return sampleHostsData[hash] || mockHostData;
 };

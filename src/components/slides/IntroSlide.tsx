@@ -21,7 +21,7 @@ export const IntroSlide: React.FC<IntroSlideProps> = ({ audience, data }) => {
         case 'STAFF':
             return {
                 title: "You made\nit happen.",
-                subtitle: "Every clean sheet, every fixed lightbulb, every smile."
+                subtitle: "Every exceptional stay requires a team effort."
             };
         case 'HOSTAI':
             return {

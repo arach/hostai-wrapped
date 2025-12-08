@@ -99,6 +99,14 @@ export const hashStaffEmail = (email: string): string => {
 export const DEMO_HOST_UUID = '550e8400-e29b-41d4-a716-446655440000';
 export const DEMO_HOST_HASH = hashHostId(DEMO_HOST_UUID);
 
+// Sample host UUIDs for testing multiple properties
+export const SAMPLE_HOST_UUIDS = [
+  { uuid: '550e8400-e29b-41d4-a716-446655440000', name: 'Horizon Stays', location: 'Washington DC' },
+  { uuid: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890', name: 'Coastal Retreats', location: 'Miami Beach' },
+  { uuid: 'b2c3d4e5-f6a7-8901-bcde-f12345678901', name: 'Mountain View Rentals', location: 'Aspen' },
+  { uuid: 'c3d4e5f6-a7b8-9012-cdef-123456789012', name: 'Urban Nest Collective', location: 'Brooklyn' },
+] as const;
+
 // Demo PM hash (matches examples/consolidated/a7f3c2.json)
 export const DEMO_PM_HASH = 'a7f3c2';
 

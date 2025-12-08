@@ -10,9 +10,11 @@ import { DiscoverySlide } from '@/components/slides/DiscoverySlide';
 import { SeasonSlide } from '@/components/slides/SeasonSlide';
 import { ReviewSlide } from '@/components/slides/ReviewSlide';
 import { OutroSlide } from '@/components/slides/OutroSlide';
-import { AdminControls } from '@/components/AdminControls';
-import { mockHostData } from '@/lib/data';
+import { AdminSidebar } from '@/components/AdminSidebar';
+import { AdminBottomBar } from '@/components/AdminBottomBar';
+import { getHostDataByHash } from '@/lib/data';
 import { SlideType, Audience } from '@/lib/types';
+import { SAMPLE_HOST_UUIDS, hashHostId } from '@/lib/hash';
 
 // Sophisticated Gradients
 const gradients: Record<SlideType, string> = {
@@ -61,7 +63,26 @@ function HomeContent() {
   const [mapViewMode, setMapViewMode] = useState<'GLOBE' | 'MAP' | 'LOCAL'>('GLOBE');
   const [isMapPlaying, setIsMapPlaying] = useState(true);
 
+  // Host selection state - active working set + selection
+  const [activeHosts, setActiveHosts] = useState<typeof SAMPLE_HOST_UUIDS[number][]>([SAMPLE_HOST_UUIDS[0]]);
+  const [selectedHostIndex, setSelectedHostIndex] = useState(0);
+  const selectedHost = activeHosts[selectedHostIndex] || SAMPLE_HOST_UUIDS[0];
+  const selectedHostHash = hashHostId(selectedHost.uuid);
+  const hostData = getHostDataByHash(selectedHostHash);
+
+  // Slide toggles - all enabled by default
+  const [enabledSlides, setEnabledSlides] = useState<Record<SlideType, boolean>>({
+    [SlideType.INTRO]: true,
+    [SlideType.MAP]: true,
+    [SlideType.DISCOVERY]: true,
+    [SlideType.STATS]: true,
+    [SlideType.SEASONS]: true,
+    [SlideType.REVIEW]: true,
+    [SlideType.OUTRO]: true,
+  });
+
   // Handle legacy URL params: ?view=guest, ?view=owner (route params preferred now)
+  // Also handle ?slides= param for custom slide selection
   useEffect(() => {
     const viewParam = searchParams.get('view');
     if (viewParam) {
@@ -77,15 +98,51 @@ function HomeContent() {
         setShowControls(false);
       }
     }
+
+    // Parse slides parameter to set enabled slides
+    const slidesParam = searchParams.get('slides');
+    if (slidesParam) {
+      const slideKeys = slidesParam.toLowerCase().split(',');
+      const slideTypeMap: Record<string, SlideType> = {
+        'intro': SlideType.INTRO,
+        'map': SlideType.MAP,
+        'discovery': SlideType.DISCOVERY,
+        'stats': SlideType.STATS,
+        'seasons': SlideType.SEASONS,
+        'review': SlideType.REVIEW,
+        'outro': SlideType.OUTRO,
+      };
+
+      // Create new enabled slides state - all disabled first, then enable selected
+      const newEnabledSlides: Record<SlideType, boolean> = {
+        [SlideType.INTRO]: false,
+        [SlideType.MAP]: false,
+        [SlideType.DISCOVERY]: false,
+        [SlideType.STATS]: false,
+        [SlideType.SEASONS]: false,
+        [SlideType.REVIEW]: false,
+        [SlideType.OUTRO]: false,
+      };
+
+      slideKeys.forEach(key => {
+        const slideType = slideTypeMap[key.trim()];
+        if (slideType) {
+          newEnabledSlides[slideType] = true;
+        }
+      });
+
+      setEnabledSlides(newEnabledSlides);
+    }
   }, [searchParams]);
 
   // Define Slide Paths based on Audience
-  const getSlides = (aud: Audience): SlideType[] => {
+  const getBaseSlides = (aud: Audience): SlideType[] => {
     switch (aud) {
         case 'GUEST':
             return [SlideType.INTRO, SlideType.MAP, SlideType.STATS, SlideType.REVIEW, SlideType.OUTRO];
         case 'STAFF':
-            return [SlideType.INTRO, SlideType.STATS, SlideType.REVIEW, SlideType.MAP, SlideType.OUTRO];
+            // intro -> reviews -> behind reviews (stats) -> community impact (map) -> wrapup
+            return [SlideType.INTRO, SlideType.REVIEW, SlideType.STATS, SlideType.MAP, SlideType.OUTRO];
         case 'HOSTAI':
             // Brand View: Intro, Scale (Stats), Network (Map), Review (Testimonial), Vision (Outro)
             return [SlideType.INTRO, SlideType.STATS, SlideType.MAP, SlideType.REVIEW, SlideType.OUTRO];
@@ -95,7 +152,9 @@ function HomeContent() {
     }
   };
 
-  const slides = getSlides(audience);
+  // Filter slides based on enabledSlides toggles
+  const baseSlides = getBaseSlides(audience);
+  const slides = baseSlides.filter(slide => enabledSlides[slide]);
 
   // Safe index check when switching audiences
   useEffect(() => {
@@ -171,31 +230,83 @@ function HomeContent() {
 
   const renderContent = () => {
     switch (currentSlide) {
-      case SlideType.INTRO: return <IntroSlide audience={audience} data={mockHostData} />;
-      case SlideType.MAP: return <GuestMapSlide data={mockHostData} viewMode={mapViewMode} isPlaying={isMapPlaying} audience={audience} />;
-      case SlideType.DISCOVERY: return <DiscoverySlide data={mockHostData} />;
-      case SlideType.STATS: return <StatsSlide data={mockHostData} audience={audience} />;
-      case SlideType.SEASONS: return <SeasonSlide key={`season-${currentSlideIndex}`} data={mockHostData} />;
-      case SlideType.REVIEW: return <ReviewSlide data={mockHostData} />;
-      case SlideType.OUTRO: return <OutroSlide audience={audience} data={mockHostData} />;
+      case SlideType.INTRO: return <IntroSlide audience={audience} data={hostData} />;
+      case SlideType.MAP: return <GuestMapSlide data={hostData} viewMode={mapViewMode} isPlaying={isMapPlaying} audience={audience} />;
+      case SlideType.DISCOVERY: return <DiscoverySlide data={hostData} />;
+      case SlideType.STATS: return <StatsSlide data={hostData} audience={audience} />;
+      case SlideType.SEASONS: return <SeasonSlide key={`season-${currentSlideIndex}`} data={hostData} />;
+      case SlideType.REVIEW: return <ReviewSlide data={hostData} />;
+      case SlideType.OUTRO: return <OutroSlide audience={audience} data={hostData} />;
       default: return null;
     }
   };
 
   return (
-    <div className="flex flex-col items-center min-h-screen bg-black text-white overflow-hidden">
+    <div className="flex h-screen bg-black text-white overflow-hidden">
+      {/* Sidebar - Search + Active Properties */}
+      {showControls && (
+        <AdminSidebar
+          allHosts={SAMPLE_HOST_UUIDS}
+          activeHosts={activeHosts}
+          setActiveHosts={setActiveHosts}
+          selectedHostIndex={selectedHostIndex}
+          setSelectedHostIndex={(idx) => {
+            setSelectedHostIndex(idx);
+            setCurrentSlideIndex(0);
+            setProgress(0);
+          }}
+        />
+      )}
 
-      {/* 1. Device View Area */}
-      <div className="flex-1 w-full flex items-center justify-center p-8 min-h-[600px] md:min-h-0">
-         {/* We wrap StoryLayout to constrain it visually like a phone on desktop */}
-         <div
-            className="relative z-10 scale-[0.85] md:scale-100 origin-center transition-transform"
-            onMouseDown={() => setIsPaused(true)}
-            onMouseUp={() => setIsPaused(false)}
-            onTouchStart={() => setIsPaused(true)}
-            onTouchEnd={() => setIsPaused(false)}
-         >
-            <StoryLayout
+      {/* Main Content Area */}
+      <div className="flex-1 flex flex-col overflow-hidden">
+        {/* Preview Area */}
+        <div className="flex-1 flex flex-col items-center justify-center bg-zinc-900 relative">
+          {/* Inspector Bar - Property + Audience */}
+          {showControls && (
+            <div className="absolute top-4 left-1/2 -translate-x-1/2 z-30 flex items-center gap-1 p-1.5 bg-white/[0.02] backdrop-blur-md rounded-full border border-white/[0.08] shadow-[0_8px_32px_rgba(0,0,0,0.4)]">
+              {/* Property Name */}
+              <div className="flex items-center gap-2 px-4 py-1.5">
+                <span className="text-sm font-medium text-white/90">{hostData.hostName}</span>
+              </div>
+
+              {/* Divider */}
+              <div className="w-px h-5 bg-white/20" />
+
+              {/* Audience Tabs */}
+              <div className="flex items-center gap-0.5 px-1">
+                {(['OWNER', 'GUEST', 'STAFF', 'HOSTAI'] as const).map((aud) => (
+                  <button
+                    key={aud}
+                    onClick={() => {
+                      setAudience(aud);
+                      setCurrentSlideIndex(0);
+                      setProgress(0);
+                    }}
+                    className={`px-3 py-1.5 rounded-full text-xs transition-all ${
+                      audience === aud
+                        ? 'bg-white text-black font-semibold'
+                        : 'text-white/60 font-medium hover:text-white hover:bg-white/10'
+                    }`}
+                  >
+                    {aud}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Device Preview + Slide Navigation Container */}
+          <div className="flex flex-col items-center">
+            {/* Device Preview */}
+            <div
+              className="relative z-10 scale-[0.65] md:scale-75 lg:scale-85 origin-top transition-transform"
+              onMouseDown={() => setIsPaused(true)}
+              onMouseUp={() => setIsPaused(false)}
+              onTouchStart={() => setIsPaused(true)}
+              onTouchEnd={() => setIsPaused(false)}
+            >
+              <StoryLayout
                 gradient={gradients[currentSlide]}
                 progress={progress}
                 onNext={nextSlide}
@@ -205,38 +316,96 @@ function HomeContent() {
                 accentColor={accentColors[currentSlide]}
                 isPaused={isPaused}
                 onTogglePause={() => setIsPaused(!isPaused)}
-            >
+              >
                 {renderContent()}
-            </StoryLayout>
-         </div>
-      </div>
+              </StoryLayout>
+            </div>
 
-      {/* 2. Admin Control Panel Area - hidden when accessed via direct link */}
-      {showControls && (
-        <div className="w-full bg-zinc-950 border-t border-zinc-900 p-6 flex justify-center items-start z-20 shadow-[0_-10px_40px_rgba(0,0,0,0.5)]">
-           <AdminControls
-              audience={audience}
-              setAudience={(a) => {
-                  setAudience(a);
-                  setCurrentSlideIndex(0); // Reset to start when changing audience
-                  setProgress(0);
-              }}
-              currentSlideIndex={currentSlideIndex}
-              slides={slides}
-              setCurrentSlideIndex={(idx) => {
-                  setCurrentSlideIndex(idx);
-                  setProgress(0);
-              }}
-              isPaused={isPaused}
-              setIsPaused={setIsPaused}
-              mapViewMode={mapViewMode}
-              setMapViewMode={setMapViewMode}
-              isMapPlaying={isMapPlaying}
-              setIsMapPlaying={setIsMapPlaying}
-              currentSlideType={currentSlide}
-           />
+            {/* Slide Navigation - Just below the phone with small margin */}
+            {/* Negative margin compensates for scale transform phantom space: 850px * (1-scale) */}
+            {showControls && (
+              <div className="w-[312px] md:w-[360px] lg:w-[408px] -mt-[290px] md:-mt-[200px] lg:-mt-[120px]">
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="text-[10px] text-zinc-500 uppercase tracking-wider">
+                    Slide {currentSlideIndex + 1}/{slides.length}
+                  </span>
+                  <span className="text-[10px] text-zinc-600">•</span>
+                  <span className="text-[10px] text-zinc-400 uppercase">
+                    {slides[currentSlideIndex]}
+                  </span>
+                </div>
+                {/* Progress bar */}
+                <div className="flex gap-1 h-1.5 mb-2">
+                  {slides.map((_, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => {
+                        setCurrentSlideIndex(idx);
+                        setProgress(0);
+                      }}
+                      className={`flex-1 rounded-full transition-all ${
+                        idx === currentSlideIndex
+                          ? 'bg-blue-500'
+                          : idx < currentSlideIndex
+                            ? 'bg-zinc-600 hover:bg-zinc-500'
+                            : 'bg-zinc-800 hover:bg-zinc-700'
+                      }`}
+                    />
+                  ))}
+                </div>
+                {/* Slide labels */}
+                <div className="flex gap-1">
+                  {slides.map((slideType, idx) => (
+                    <button
+                      key={slideType}
+                      onClick={() => {
+                        setCurrentSlideIndex(idx);
+                        setProgress(0);
+                      }}
+                      className={`flex-1 py-1 rounded text-[9px] font-medium transition-all ${
+                        idx === currentSlideIndex
+                          ? 'text-blue-400'
+                          : 'text-zinc-600 hover:text-zinc-500'
+                      }`}
+                    >
+                      {slideType.charAt(0) + slideType.slice(1).toLowerCase()}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
         </div>
-      )}
+
+        {/* Admin Bar - Audience + Share */}
+        {showControls && (
+          <AdminBottomBar
+            enabledSlides={enabledSlides}
+            setEnabledSlides={setEnabledSlides}
+            baseSlides={baseSlides}
+            currentSlideIndex={currentSlideIndex}
+            setCurrentSlideIndex={(idx) => {
+              setCurrentSlideIndex(idx);
+              setProgress(0);
+            }}
+            slides={slides}
+            hostUuid={selectedHost.uuid}
+            audience={audience}
+            setAudience={(a) => {
+              setAudience(a);
+              setCurrentSlideIndex(0);
+              setProgress(0);
+            }}
+            activeHosts={activeHosts}
+            selectedHostIndex={selectedHostIndex}
+            setSelectedHostIndex={(idx) => {
+              setSelectedHostIndex(idx);
+              setCurrentSlideIndex(0);
+              setProgress(0);
+            }}
+          />
+        )}
+      </div>
     </div>
   );
 }

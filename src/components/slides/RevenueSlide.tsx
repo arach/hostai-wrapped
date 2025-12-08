@@ -133,50 +133,58 @@ export const StatsSlide: React.FC<StatsSlideProps> = ({ data, audience }) => {
 
   const renderStaffView = () => (
     <>
-      <div className="animate-slide-up">
-        <div className={`inline-block bg-purple-500/20 text-purple-300 border border-purple-500/30 px-4 py-1.5 rounded-full ${typography.label} mb-6 backdrop-blur-sm`}>
-          Impact Report
-        </div>
-        <h2 className={`${typography.hero} mb-6`}>
-          The Magic <br/>Makers.
+      {/* Dark background with subtle grid - matching Owner stats */}
+      <div className="absolute inset-0 z-0 pointer-events-none bg-black" />
+      <div
+        className="absolute inset-0 z-0 pointer-events-none"
+        style={{
+          backgroundImage: `linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px)`,
+          backgroundSize: '24px 24px'
+        }}
+      />
+
+      {/* Header */}
+      <div className="relative z-10 mb-6 animate-fade-in">
+        <h2 className={`${typography.hero} text-white mb-2`}>
+          The year<br/>in service.
         </h2>
+        <p className={`${typography.body} text-white/70`}>Behind every 5-star review.</p>
+      </div>
 
-        <div className="grid grid-cols-2 gap-4">
-            {/* Hours */}
-            <div className="bg-white/5 p-4 rounded-2xl border border-white/10 flex flex-col justify-between h-28">
-                <div className="w-8 h-8 bg-purple-500/20 rounded-full flex items-center justify-center">🧹</div>
-                <div>
-                    <div className={typography.stat}>{data.cleaningHours.toLocaleString()}</div>
-                    <div className={typography.sublabel}>Hours of Service</div>
-                </div>
-            </div>
+      {/* Spacer */}
+      <div className="flex-1" />
 
-            {/* Reviews */}
-            <div className="bg-white/5 p-4 rounded-2xl border border-white/10 flex flex-col justify-between h-28">
-                <div className="w-8 h-8 bg-yellow-500/20 rounded-full flex items-center justify-center">⭐</div>
-                <div>
-                    <div className={typography.stat}>{data.fiveStarReviewsEarned}</div>
-                    <div className={typography.sublabel}>5-Star Reviews</div>
-                </div>
-            </div>
+      {/* Bottom Content Area - Stats Grid */}
+      <div className="animate-slide-up relative z-10" style={{ animationDelay: '0.2s' }}>
+        <h3 className={`${typography.sublabel} mb-3 uppercase tracking-wider`}>Your Impact</h3>
+        {/* Grid container */}
+        <div className="grid grid-cols-2 relative">
+          {/* Extending lines */}
+          <div className="absolute left-[-2rem] right-[-2rem] top-0 h-px bg-white/5" />
+          <div className="absolute left-[-2rem] right-[-2rem] bottom-0 h-px bg-white/5" />
+          <div className="absolute left-1/2 top-[-1rem] bottom-[-1rem] w-px bg-white/5" />
 
-             {/* Sheets */}
-             <div className="bg-white/5 p-4 rounded-2xl border border-white/10 flex flex-col justify-between h-28">
-                <div className="w-8 h-8 bg-blue-500/20 rounded-full flex items-center justify-center">🧺</div>
-                <div>
-                    <div className={typography.stat}>{data.sheetsCleaned.toLocaleString()}</div>
-                    <div className={typography.sublabel}>Sheets Cleaned</div>
-                </div>
-            </div>
+          {/* Row 1 */}
+          <div className="p-4 border-b border-r border-white/20">
+            <div className={`${typography.stat} mb-1`}>{data.cleaningHours.toLocaleString()}</div>
+            <div className={typography.sublabel}>Hours of Service 🧹</div>
+          </div>
 
-             {/* Batteries */}
-             <div className="bg-white/5 p-4 rounded-2xl border border-white/10 flex flex-col justify-between h-28">
-                <div className="w-8 h-8 bg-green-500/20 rounded-full flex items-center justify-center">🔋</div>
-                <div>
-                    <div className={typography.stat}>{data.batteriesReplaced}</div>
-                    <div className={typography.sublabel}>Batteries Replaced</div>
-                </div>
-            </div>
+          <div className="p-4 border-b border-white/20">
+            <div className={`${typography.stat} mb-1`}>{data.fiveStarReviewsEarned}</div>
+            <div className={typography.sublabel}>5-Star Reviews ⭐</div>
+          </div>
+
+          {/* Row 2 */}
+          <div className="p-4 border-r border-white/20">
+            <div className={typography.stat}>{data.sheetsCleaned.toLocaleString()}</div>
+            <div className={typography.sublabel}>Sheets Cleaned 🧺</div>
+          </div>
+
+          <div className="p-4">
+            <div className={typography.stat}>{data.batteriesReplaced}</div>
+            <div className={typography.sublabel}>Batteries Replaced 🔋</div>
+          </div>
         </div>
       </div>
     </>

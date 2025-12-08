@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { StoryLayout } from '@/components/StoryLayout';
 import { IntroSlide } from '@/components/slides/IntroSlide';
 import { StatsSlide } from '@/components/slides/RevenueSlide';
@@ -9,7 +10,7 @@ import { DiscoverySlide } from '@/components/slides/DiscoverySlide';
 import { SeasonSlide } from '@/components/slides/SeasonSlide';
 import { ReviewSlide } from '@/components/slides/ReviewSlide';
 import { OutroSlide } from '@/components/slides/OutroSlide';
-import { mockHostData } from '@/lib/data';
+import { getHostDataByHash } from '@/lib/data';
 import { SlideType, Audience } from '@/lib/types';
 
 const gradients: Record<SlideType, string> = {
@@ -30,6 +31,8 @@ interface HostAudienceClientProps {
 }
 
 export default function HostAudienceClient({ hostId, audienceParam }: HostAudienceClientProps) {
+  const searchParams = useSearchParams();
+
   // Map audience param to Audience type
   const getAudience = (a: string): Audience => {
     const lower = a.toLowerCase();
@@ -41,9 +44,8 @@ export default function HostAudienceClient({ hostId, audienceParam }: HostAudien
 
   const audience: Audience = getAudience(audienceParam);
 
-  // TODO: In production, use hostId to fetch actual host data
-  // For now, using mock data
-  const hostData = mockHostData;
+  // Get host data by hash - supports multiple sample properties
+  const hostData = getHostDataByHash(hostId);
 
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
   const [progress, setProgress] = useState(0);
@@ -51,19 +53,69 @@ export default function HostAudienceClient({ hostId, audienceParam }: HostAudien
   const [mapViewMode] = useState<'GLOBE' | 'MAP' | 'LOCAL'>('GLOBE');
   const [isMapPlaying] = useState(true);
 
-  const getSlides = (aud: Audience): SlideType[] => {
+  // Slide toggles - all enabled by default
+  const [enabledSlides, setEnabledSlides] = useState<Record<SlideType, boolean>>({
+    [SlideType.INTRO]: true,
+    [SlideType.MAP]: true,
+    [SlideType.DISCOVERY]: true,
+    [SlideType.STATS]: true,
+    [SlideType.SEASONS]: true,
+    [SlideType.REVIEW]: true,
+    [SlideType.OUTRO]: true,
+  });
+
+  // Parse ?slides= URL parameter for custom slide selection
+  useEffect(() => {
+    const slidesParam = searchParams.get('slides');
+    if (slidesParam) {
+      const slideKeys = slidesParam.toLowerCase().split(',');
+      const slideTypeMap: Record<string, SlideType> = {
+        'intro': SlideType.INTRO,
+        'map': SlideType.MAP,
+        'discovery': SlideType.DISCOVERY,
+        'stats': SlideType.STATS,
+        'seasons': SlideType.SEASONS,
+        'review': SlideType.REVIEW,
+        'outro': SlideType.OUTRO,
+      };
+
+      const newEnabledSlides: Record<SlideType, boolean> = {
+        [SlideType.INTRO]: false,
+        [SlideType.MAP]: false,
+        [SlideType.DISCOVERY]: false,
+        [SlideType.STATS]: false,
+        [SlideType.SEASONS]: false,
+        [SlideType.REVIEW]: false,
+        [SlideType.OUTRO]: false,
+      };
+
+      slideKeys.forEach(key => {
+        const slideType = slideTypeMap[key.trim()];
+        if (slideType) {
+          newEnabledSlides[slideType] = true;
+        }
+      });
+
+      setEnabledSlides(newEnabledSlides);
+    }
+  }, [searchParams]);
+
+  const getBaseSlides = (aud: Audience): SlideType[] => {
     switch (aud) {
       case 'GUEST':
         return [SlideType.INTRO, SlideType.MAP, SlideType.STATS, SlideType.REVIEW, SlideType.OUTRO];
       case 'STAFF':
-        return [SlideType.INTRO, SlideType.STATS, SlideType.REVIEW, SlideType.MAP, SlideType.OUTRO];
+        // intro -> reviews -> behind reviews (stats) -> community impact (map) -> wrapup
+        return [SlideType.INTRO, SlideType.REVIEW, SlideType.STATS, SlideType.MAP, SlideType.OUTRO];
       case 'OWNER':
       default:
         return [SlideType.INTRO, SlideType.MAP, SlideType.DISCOVERY, SlideType.STATS, SlideType.SEASONS, SlideType.REVIEW, SlideType.OUTRO];
     }
   };
 
-  const slides = getSlides(audience);
+  // Filter slides based on enabledSlides toggles
+  const baseSlides = getBaseSlides(audience);
+  const slides = baseSlides.filter(slide => enabledSlides[slide]);
   const currentSlide = slides[currentSlideIndex] || SlideType.INTRO;
 
   const getBackgroundImage = () => {
